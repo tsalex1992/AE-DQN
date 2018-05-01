@@ -1,0 +1,145 @@
+[2018-05-01 19:16:10] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Pong-v0/05.01/19.16
+[2018-05-01 19:16:11] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:11] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:11] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:11] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:11] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/05.01/19.16/model.ckpt
+[2018-05-01 19:16:11] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:11] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:12] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:12] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:12] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:12] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:12] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:12] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:12] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:12] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:13] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:13] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:13] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:13] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:13] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:13] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:14] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:14] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:14] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:14] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:14] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:14] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:14] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:14] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:14] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:15] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-01 19:16:15] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:15] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:15] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:15] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:15] INFO [MainThread:116] Running local_init_op.
+[2018-05-01 19:16:16] INFO [MainThread:116] Done running local_init_op.
+[2018-05-01 19:16:16] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:16] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:17] INFO [MainThread:116] Starting standard services.
+[2018-05-01 19:16:17] INFO [MainThread:116] Starting queue runners.
+[2018-05-01 19:16:37] INFO [MainThread:141] T5 / EPISODE 1 / STEP 7.222k / MEAN REWARD -21.0 / 349 STEPS/s
+[2018-05-01 19:16:39] INFO [MainThread:141] T7 / EPISODE 1 / STEP 8.07k / MEAN REWARD -21.0 / 356 STEPS/s
+[2018-05-01 19:16:41] INFO [MainThread:141] T3 / EPISODE 1 / STEP 8.568k / MEAN REWARD -21.0 / 358 STEPS/s
+[2018-05-01 19:16:42] INFO [MainThread:141] T4 / EPISODE 1 / STEP 9.152k / MEAN REWARD -21.0 / 360 STEPS/s
+[2018-05-01 19:16:42] INFO [MainThread:141] T0 / EPISODE 1 / STEP 9.32k / MEAN REWARD -21.0 / 359 STEPS/s
+[2018-05-01 19:16:43] INFO [MainThread:141] T2 / EPISODE 1 / STEP 9.564k / MEAN REWARD -20.0 / 361 STEPS/s
+[2018-05-01 19:16:43] INFO [MainThread:141] T1 / EPISODE 1 / STEP 9.57k / MEAN REWARD -21.0 / 361 STEPS/s
+[2018-05-01 19:16:48] INFO [MainThread:141] T6 / EPISODE 1 / STEP 11.403k / MEAN REWARD -19.0 / 368 STEPS/s
+[2018-05-01 19:16:57] INFO [MainThread:141] T5 / EPISODE 2 / STEP 15.033k / MEAN REWARD -21.0 / 375 STEPS/s
+[2018-05-01 19:16:59] INFO [MainThread:141] T7 / EPISODE 2 / STEP 16.086k / MEAN REWARD -21.0 / 376 STEPS/s
+[2018-05-01 19:17:00] INFO [MainThread:141] T3 / EPISODE 2 / STEP 16.533k / MEAN REWARD -21.0 / 376 STEPS/s
+[2018-05-01 19:17:03] INFO [MainThread:141] T1 / EPISODE 2 / STEP 17.562k / MEAN REWARD -21.0 / 377 STEPS/s
+[2018-05-01 19:17:04] INFO [MainThread:141] T4 / EPISODE 2 / STEP 17.813k / MEAN REWARD -20.5 / 377 STEPS/s
+[2018-05-01 19:17:04] INFO [MainThread:141] T0 / EPISODE 2 / STEP 17.964k / MEAN REWARD -21.0 / 377 STEPS/s
+[2018-05-01 19:17:05] INFO [MainThread:141] T2 / EPISODE 2 / STEP 18.131k / MEAN REWARD -20.5 / 377 STEPS/s
+[2018-05-01 19:17:14] INFO [MainThread:141] T6 / EPISODE 2 / STEP 21.961k / MEAN REWARD -20.0 / 380 STEPS/s
+[2018-05-01 19:17:21] INFO [MainThread:141] T5 / EPISODE 3 / STEP 24.767k / MEAN REWARD -21.0 / 382 STEPS/s
+[2018-05-01 19:17:25] INFO [MainThread:141] T0 / EPISODE 3 / STEP 26.206k / MEAN REWARD -20.7 / 383 STEPS/s
+[2018-05-01 19:17:26] INFO [MainThread:141] T7 / EPISODE 3 / STEP 26.547k / MEAN REWARD -20.7 / 384 STEPS/s
+[2018-05-01 19:17:29] INFO [MainThread:141] T2 / EPISODE 3 / STEP 27.732k / MEAN REWARD -20.3 / 385 STEPS/s
+[2018-05-01 19:17:29] INFO [MainThread:141] T3 / EPISODE 3 / STEP 27.786k / MEAN REWARD -20.7 / 385 STEPS/s
+[2018-05-01 19:17:30] INFO [MainThread:141] T1 / EPISODE 3 / STEP 28.418k / MEAN REWARD -20.3 / 385 STEPS/s
+[2018-05-01 19:17:35] INFO [MainThread:141] T4 / EPISODE 3 / STEP 30.316k / MEAN REWARD -20.3 / 386 STEPS/s
+[2018-05-01 19:17:37] INFO [MainThread:141] T6 / EPISODE 3 / STEP 30.934k / MEAN REWARD -20.3 / 387 STEPS/s
+[2018-05-01 19:17:42] INFO [MainThread:141] T5 / EPISODE 4 / STEP 33.27k / MEAN REWARD -21.0 / 388 STEPS/s
+[2018-05-01 19:17:48] INFO [MainThread:141] T7 / EPISODE 4 / STEP 35.58k / MEAN REWARD -20.8 / 387 STEPS/s
+[2018-05-01 19:17:49] INFO [MainThread:141] T0 / EPISODE 4 / STEP 35.773k / MEAN REWARD -20.8 / 387 STEPS/s
+[2018-05-01 19:17:51] INFO [MainThread:141] T1 / EPISODE 4 / STEP 36.609k / MEAN REWARD -20.5 / 388 STEPS/s
+[2018-05-01 19:17:51] INFO [MainThread:141] T2 / EPISODE 4 / STEP 36.759k / MEAN REWARD -20.5 / 388 STEPS/s
+[2018-05-01 19:17:53] INFO [MainThread:141] T3 / EPISODE 4 / STEP 37.456k / MEAN REWARD -20.5 / 388 STEPS/s
+[2018-05-01 19:18:00] INFO [MainThread:141] T4 / EPISODE 4 / STEP 40.428k / MEAN REWARD -20.5 / 389 STEPS/s
+[2018-05-01 19:18:02] INFO [MainThread:141] T6 / EPISODE 4 / STEP 41.173k / MEAN REWARD -20.5 / 389 STEPS/s
+[2018-05-01 19:18:06] INFO [MainThread:141] T5 / EPISODE 5 / STEP 42.495k / MEAN REWARD -21.0 / 389 STEPS/s
+[2018-05-01 19:18:11] INFO [MainThread:141] T7 / EPISODE 5 / STEP 44.043k / MEAN REWARD -20.8 / 385 STEPS/s
+[2018-05-01 19:18:13] INFO [MainThread:141] T1 / EPISODE 5 / STEP 44.514k / MEAN REWARD -20.6 / 383 STEPS/s
+[2018-05-01 19:18:13] INFO [MainThread:141] T0 / EPISODE 5 / STEP 44.67k / MEAN REWARD -20.6 / 382 STEPS/s
+[2018-05-01 19:18:16] INFO [MainThread:141] T2 / EPISODE 5 / STEP 45.263k / MEAN REWARD -20.6 / 379 STEPS/s
+[2018-05-01 19:18:18] INFO [MainThread:141] T3 / EPISODE 5 / STEP 45.788k / MEAN REWARD -20.6 / 377 STEPS/s
+[2018-05-01 19:18:31] INFO [MainThread:141] T4 / EPISODE 5 / STEP 48.918k / MEAN REWARD -20.6 / 363 STEPS/s
+[2018-05-01 19:18:41] INFO [MainThread:141] T5 / EPISODE 6 / STEP 51.042k / MEAN REWARD -21.0 / 354 STEPS/s
+[2018-05-01 19:18:42] INFO [MainThread:141] T6 / EPISODE 5 / STEP 51.433k / MEAN REWARD -20.6 / 353 STEPS/s
+[2018-05-01 19:18:49] INFO [MainThread:141] T7 / EPISODE 6 / STEP 52.934k / MEAN REWARD -20.8 / 348 STEPS/s
+[2018-05-01 19:18:52] INFO [MainThread:141] T0 / EPISODE 6 / STEP 53.825k / MEAN REWARD -20.7 / 345 STEPS/s
+[2018-05-01 19:18:55] INFO [MainThread:141] T3 / EPISODE 6 / STEP 54.422k / MEAN REWARD -20.7 / 344 STEPS/s
+[2018-05-01 19:18:58] INFO [MainThread:141] T2 / EPISODE 6 / STEP 55.234k / MEAN REWARD -20.7 / 341 STEPS/s
+[2018-05-01 19:18:59] INFO [MainThread:141] T1 / EPISODE 6 / STEP 55.48k / MEAN REWARD -20.7 / 341 STEPS/s
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-01 19:19:21] INFO [MainThread:141] T7 / EPISODE 7 / STEP 60.022k / MEAN REWARD -20.7 / 325 STEPS/s
+[2018-05-01 19:19:36] INFO [MainThread:141] T7 / EPISODE 8 / STEP 61.283k / MEAN REWARD -20.5 / 308 STEPS/s
+[2018-05-01 19:19:48] INFO [MainThread:141] T7 / EPISODE 9 / STEP 62.446k / MEAN REWARD -20.4 / 295 STEPS/s
+[2018-05-01 19:20:04] INFO [MainThread:141] T7 / EPISODE 10 / STEP 63.954k / MEAN REWARD -20.3 / 281 STEPS/s
+[2018-05-01 19:20:16] INFO [MainThread:141] T7 / EPISODE 11 / STEP 65.001k / MEAN REWARD -20.4 / 271 STEPS/s
+[2018-05-01 19:20:31] INFO [MainThread:141] T7 / EPISODE 12 / STEP 66.411k / MEAN REWARD -20.4 / 261 STEPS/s
+[2018-05-01 19:20:43] INFO [MainThread:141] T7 / EPISODE 13 / STEP 67.453k / MEAN REWARD -20.5 / 253 STEPS/s
+[2018-05-01 19:20:58] INFO [MainThread:141] T7 / EPISODE 14 / STEP 68.86k / MEAN REWARD -20.4 / 244 STEPS/s
+[2018-05-01 19:21:12] INFO [MainThread:141] T7 / EPISODE 15 / STEP 70.137k / MEAN REWARD -20.4 / 237 STEPS/s
+[2018-05-01 19:21:26] INFO [MainThread:141] T7 / EPISODE 16 / STEP 71.466k / MEAN REWARD -20.4 / 231 STEPS/s
+[2018-05-01 19:21:42] INFO [MainThread:141] T7 / EPISODE 17 / STEP 72.901k / MEAN REWARD -20.3 / 224 STEPS/s
+[2018-05-01 19:21:55] INFO [MainThread:141] T7 / EPISODE 18 / STEP 74.11k / MEAN REWARD -20.3 / 219 STEPS/s
+[2018-05-01 19:22:06] INFO [MainThread:141] T7 / EPISODE 19 / STEP 75.123k / MEAN REWARD -20.3 / 215 STEPS/s
+[2018-05-01 19:22:18] INFO [MainThread:141] T7 / EPISODE 20 / STEP 76.227k / MEAN REWARD -20.4 / 211 STEPS/s
+[2018-05-01 19:22:29] INFO [MainThread:141] T7 / EPISODE 21 / STEP 77.29k / MEAN REWARD -20.4 / 207 STEPS/s
+[2018-05-01 19:22:45] INFO [MainThread:141] T7 / EPISODE 22 / STEP 78.731k / MEAN REWARD -20.4 / 203 STEPS/s
+[2018-05-01 19:22:57] INFO [MainThread:141] T7 / EPISODE 23 / STEP 79.895k / MEAN REWARD -20.4 / 199 STEPS/s
+[2018-05-01 19:23:09] INFO [MainThread:141] T7 / EPISODE 24 / STEP 80.988k / MEAN REWARD -20.4 / 197 STEPS/s
+[2018-05-01 19:23:21] INFO [MainThread:141] T7 / EPISODE 25 / STEP 82.173k / MEAN REWARD -20.4 / 194 STEPS/s
+[2018-05-01 19:23:33] INFO [MainThread:141] T7 / EPISODE 26 / STEP 83.303k / MEAN REWARD -20.4 / 191 STEPS/s
+[2018-05-01 19:23:46] INFO [MainThread:141] T7 / EPISODE 27 / STEP 84.495k / MEAN REWARD -20.4 / 188 STEPS/s
+[2018-05-01 19:23:58] INFO [MainThread:141] T7 / EPISODE 28 / STEP 85.628k / MEAN REWARD -20.5 / 186 STEPS/s
+[2018-05-01 19:24:09] INFO [MainThread:141] T7 / EPISODE 29 / STEP 86.725k / MEAN REWARD -20.5 / 183 STEPS/s
+[2018-05-01 19:24:23] INFO [MainThread:141] T7 / EPISODE 30 / STEP 87.975k / MEAN REWARD -20.5 / 181 STEPS/s
+[2018-05-01 19:24:35] INFO [MainThread:141] T7 / EPISODE 31 / STEP 89.152k / MEAN REWARD -20.5 / 179 STEPS/s
+[2018-05-01 19:24:47] INFO [MainThread:141] T7 / EPISODE 32 / STEP 90.258k / MEAN REWARD -20.5 / 177 STEPS/s
+[2018-05-01 19:24:50] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:24:50] INFO [Dummy-1:37] Signal 2 detected, cleaning up.
+[2018-05-01 19:24:50] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
