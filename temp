@@ -1,0 +1,230 @@
+    1  git add *
+    2  git push origin master
+    3  sudo apt update
+    4  sudo apt dist-upgrade
+    5  sudo apt install python2.7 python-pip
+    6  Python -v
+    7  python -v
+    8  echo "# AE-DQN" >> README.md
+    9  git init
+   10  git add README.md
+   11  git commit -m "first commit"
+   12  git remote add origin https://github.com/tsalex1992/AE-DQN.git
+   13  git push -u origin master
+   14  git remote add origin https://github.com/tsalex1992/AE-DQN.git
+   15  git push -u origin master
+   16  git remote -v
+   17  git commit -m "initial commit"
+   18  git config --global user.email tsalex1992@gmail.com
+   19  git config --global user.name tsalex1992
+   20  git commit -m "initial commit"
+   21  git push -u origin master
+   22  nvcc --version
+   23  cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
+   24  nvcc  --version
+   25  sudo apt-get install python-pip python-dev python-virtualenv 
+   26  sudo apt-get install python-pip python-dev python-virtualenv ./
+   27  sudo apt-get install python-pip python-dev python-virtualenv `pwd`
+   28  sudo apt-get install python-pip python-dev python-virtualenv ./Virtualenv
+   29  mkdir Virtualenv
+   30  sudo apt-get install python-pip python-dev python-virtualenv ./Virtualenv
+   31  sudo apt-get install python-pip python-dev python-virtualenv `pwd`
+   32  pwd
+   33  conda create -n tensorflow
+   34  cd ..
+   35  conda create -n tensorflow
+   36  chmod 777 Anaconda2-5.1.0-Linux-x86_64.sh 
+   37  ./Anaconda2-5.1.0-Linux-x86_64.sh 
+   38  source activate tensorflow
+   39  pip install --ignore-installed --upgrade tfBinaryURL
+   40  pip install --upgrade pip
+   41  pip install --ignore-installed --upgrade tfBinaryURL
+   42  python2 -m pip install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.0-py2-none-any.whl
+   43  python
+   44  sudo pip uninstall tensorflow 
+   45  source deactivate
+   46  virtualenv --system-site-packages ~/tensorflow
+   47  ls
+   48  source activate tensorflow
+   49  python
+   50  cd ~
+   51  python
+   52  source deactivate
+   53  python
+   54  sudo pip uninstall protobuf
+   55  pip install --upgrade pip
+   56  sudo pip uninstall tensorflow 
+   57  sudo apt-get install python-pip python-dev python-TF
+   58  sudo apt-get install python-pip python-dev python-virtualenv
+   59  virtualenv --system-site-packages TF
+   60  mkdir TF
+   61  ls
+   62  virtualenv --system-site-packages TF
+   63  virtualenv --system-site-packages ./TF
+   64  virtualenv --system-site-packages `pwd`/TF
+   65  python
+   66  sudo apt-get install python-pip python-dev 
+   67  pip install tensorflow-gpu 
+   68  protobuf -v
+   69  sudo pip  install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.2.1-cp27-none-linux_x86_64.whl
+   70  pip install protobuf
+   71  pip install --upgrade   https://storage.googleapis.com/tensorflow/linux/cpu/protobuf-3.1.0-cp27-none-linux_x86_64.whl
+   72  python
+   73  source activate tensorflow
+   74  import tensorflow as tf
+   75  hello = tf.constant('Hello, TensorFlow!')
+   76  python
+   77  python -v
+   78  sudo pip uninstall tensorflow
+   79  pip install --upgrade pip
+   80  pip unistall protobuf
+   81  pip uninstall protobuf
+   82  pip install --upgrade pip
+   83  pip install protobuf
+   84  pip uninstall protobuf
+   85  pip install protobuf==3.1.0
+   86  history
+   87  source deactivate
+   88  sudo -apt get pip
+   89  sudo apt-get pip
+   90  sudo -apt get pip
+   91  sudo apt-get update && sudo apt-get -y upgrade
+   92  sudo apt-get install python-pip 
+   93  sudo apt autoremove install python-pip 
+   94  sudo apt autoremove  python-pip 
+   95  sudo apt-get install python-pip
+   96  sudo apt-get python-dev python-virtualenv 
+   97  sudo apt-get install python-pip python-dev python-virtualenv 
+   98  virtualenv --system-site-packages ~/TF-GPU
+   99  python 2.7 virtualenv --system-site-packages ~/TF-GPU
+  100  python 2.7 virtualenv --system-site-packages -p python2.7 ~/TF-GPU
+  101  sudo apt-get install python2-pip python2-dev python-virtualenv 
+  102  apt-uninstall pip
+  103  apt uninstall pip
+  104  sudo apt uninstall pip
+  105  sudo apt-get remove pip
+  106  pip -v
+  107  sudo apt-get install python-pip python-dev python-virtualenv
+  108  virtualenv --system-site-packages ~/TF
+  109  echo $PATH
+  110  cd ~
+  111  pwd
+  112  rm -rf anaconda2/
+  113  python -v
+  114  sudo apt install python2.7 python-pip
+  115  python -v
+  116  sudo apt install python2.7 
+  117  sudo apt-get update
+  118  sudo apt-get upgrade
+  119  python -v
+  120  pip install argparse
+  121  pip install protobuf
+  122  pip install protobuf==3.1.0
+  123  pip install argparse
+  124  pip install protobuf==3.4.0
+  125  pip install argparse
+  126  chmod 777 install-sh 
+  127  ./install-sh 
+  128  less README 
+  129  make
+  130  ./configure
+  131  ./configure
+  132  make
+  133  make install
+  134  sudo make install
+  135  python -v
+  136  cd ..
+  137  pip install tensorflow-gpu 
+  138  python
+  139  ipython
+  140  sudo apt install ipython
+  141  ipython
+  142  python3 
+  143  sudo apt-get install python3-pip python3-dev python-virtualenv 
+  144  virtualenv --system-site-packages -p python3 ~/tf-gpu
+  145  source ~/tf-gpu/bin/activate
+  146  pip3 install --upgrade tensorflow-gpu 
+  147  source ~/tensorflow/bin/activate 
+  148  import tensorflow as tf
+  149  python3
+  150  ipython
+  151  pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.2.1-cp27-none-linux_x86_64.whl
+  152  pip install --upgrade tensorflow-gpu 
+  153  python -v
+  154  virtualenv --system-site-packages ~/tensorflow
+  155  cd /usr/local/bin/python2
+  156  cd /usr/local/bin/
+  157  ls
+  158  cd ..
+  159  ls
+  160  cd lib
+  161  ls
+  162  cd ..
+  163  virtualenv --system-site-packages ~/tensorflow
+  164  sudo apt-get install zlib1g-dev
+  165  virtualenv --system-site-packages ~/tensorflow
+  166  sudo apt-get install zlib
+  167  pip install zlib
+  168  python
+  169  python3
+  170  activate tf-gpu
+  171  source activate tf-gpu
+  172  source activate TF-GPU
+  173  env
+  174  env --
+  175  source tf-gpu/bin/activate
+  176  python
+  177  python2.7
+  178  exit()
+  179  pip install -U numpy
+  180  python
+  181  sudo apt-get remove python-numpy
+  182  sudo pip uninstall numpy
+  183  pip install numpy
+  184  python
+  185  sudo apt-get autoclean
+  186  python
+  187  python3
+  188  pip3 install numpy
+  189  python3
+  190  source tf-gpu/bin/activate
+  191  python
+  192  ldconfig -v
+  193  ldconfig -v | grep libcublas
+  194  python
+  195  python2.7
+  196  ldconfig -v | grep libcublas
+  197  python3
+  198  sudo apt-get install g++ freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libglu1-mesa libglu1-mesa-dev
+  199  wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
+  200  chmod +x cuda_9.0.176_384.81_linux-run 
+  201  sudo ./cuda_9.0.176_384.81_linux-run --override
+  202  sudo ln -s /usr/bin/gcc-6 /usr/local/cuda/bin/gcc
+  203  sudo ln -s /usr/bin/g++-6 /usr/local/cuda/bin/g++
+  204  source tf-gpu/bin/activate
+  205  python
+  206  sudo apt-get remove nvidia-cuda-toolkit
+  207  sudo apt-get update
+  208  sudo apt-get install cuda-toolkit-9-0 
+  209  nvidia-smi
+  210  ldconfig -v | grep libcublas
+  211  reboot
+  212  python3.5
+  213  source tf-gpu/bin/activate
+  214  python
+  215  git clone https://github.com/openai/gym.git
+  216  cd gym
+  217  pip install -e
+  218  pip install -e .
+  219  pip install --upgrade pip
+  220  sudo apt-get install python-skimage
+  221  pip install Cython
+  222  cd //
+  223  cd ~
+  224  cd Downloads/
+  225  ls
+  226  pip install Cython
+  227  git clone https://github.com/steveKapturowski/tensorflow-rl.git
+  228  source activate tf-gpu
+  229  history
+  230  history >temp
