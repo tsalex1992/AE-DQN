@@ -122,10 +122,10 @@ def main(args):
         args.baseline_vars = SharedVars(baseline_network.params)
         args.vf_input_shape = vf_input_shape
 
-    if args.alg_type in ['q', 'sarsa', 'dueling', 'dqn-cts']:
+    if args.alg_type in ['q', 'sarsa', 'dueling', 'dqn-cts', 'AE']:
         args.target_vars = SharedVars(network.params)
         args.target_update_flags = SharedFlags(args.num_actor_learners)
-    if args.alg_type in ['dqn-cts', 'a3c-cts', 'a3c-lstm-cts']:
+    if args.alg_type in ['dqn-cts', 'a3c-cts', 'a3c-lstm-cts','AE']: #TODO check density_model_update_flags
         args.density_model_update_flags = SharedFlags(args.num_actor_learners)
 
     tf.reset_default_graph()
@@ -171,7 +171,12 @@ def main(args):
 
     try:
         for t in actor_learners:
-
+            file_name = "myfile_"+str(t)
+            with open("grpah", 'w') as file_name:
+                wr = csv.writer(file_name, quoting=csv.QUOTE_ALL)
+                wr.writerow(t.vis.plot_data['X'])
+                wr.writerow(t.vis.plot_data['Y'])
+                print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
             t.join()
     except KeyboardInterrupt:
         #Terminate with extreme prejudice
@@ -208,7 +213,7 @@ def get_config():
 
     #override defaults
     parser.add_argument('game', help='Name of game')
-    parser.add_argument('--alg_type', default="a3c", help='Type of algorithm: q (for Q-learning), sarsa, a3c (for actor-critic)', dest='alg_type')
+    parser.add_argument('--alg_type', default="a3c", help='Type of algorithm: q (for Q-learning), sarsa, a3c (for actor-critic), AE for action elimination', dest='alg_type')
     parser.add_argument('--arch', default='NIPS', help='Which network architecture to use: NIPS, NATURE, ATARI-TRPO, or FC (fully connected)', dest='arch')
     parser.add_argument('--env', default='GYM', help='Type of environment: ALE or GYM', dest='env')
     parser.add_argument('--rom_path', help='Directory where the game roms are located (needed for ALE environment)', dest='rom_path')
@@ -256,6 +261,10 @@ def get_config():
     parser.add_argument('--batch_update_size', default=32, type=int, help='Minibatch size for q-learning updates', dest='batch_update_size')
     parser.add_argument('--exploration_strategy', default='epsilon-greedy', type=str, help='boltzmann or epsilon-greedy', dest='exploration_strategy')
     parser.add_argument('--temperature', default=1.0, type=float, help='temperature to use for boltzmann exploration', dest='bolzmann_temperature')
+
+    #AE args
+    parser.add_argument('--ae_delta', default=0.01, type=float, help='uncertanty in choice of action', dest='ae_delta)
+    parser.add_argument('--ae_epsilon', default=0.5, type=float, help='Distance from real Q', dest='ae_epsilon)
 
     #a3c args
     parser.add_argument('--entropy', default=0.01, type=float, help='Strength of the entropy regularization term (needed for actor-critic)', dest='entropy_regularisation_strength')
