@@ -1,145 +1,650 @@
-[2018-05-01 19:16:10] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Pong-v0/05.01/19.16
-[2018-05-01 19:16:11] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-13 15:17:47] INFO [MainThread:36] Signal 2 detected, cleaning up.
+[2018-05-15 12:55:23] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/12.55
+[2018-05-15 12:55:24] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:11] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:11] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:11] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:11] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/05.01/19.16/model.ckpt
-[2018-05-01 19:16:11] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:11] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 12:55:24] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 12:55:24] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 12:55:25] INFO [MainThread:116] Starting standard services.
+[2018-05-15 12:55:25] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/12.55/model.ckpt
+[2018-05-15 12:55:25] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 12:55:25] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:12] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:12] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:12] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 12:55:25] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 12:55:25] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 12:55:25] INFO [MainThread:116] Starting standard services.
+[2018-05-15 12:55:25] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 12:55:29] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.88k / MEAN REWARD 150.0 / 212 STEPS/s
+[2018-05-15 12:55:30] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.936k / MEAN REWARD 200.0 / 210 STEPS/s
+[2018-05-15 12:55:33] INFO [MainThread:141] T1 / EPISODE 2 / STEP 1.731k / MEAN REWARD 150.0 / 222 STEPS/s
+[2018-05-15 12:55:34] INFO [MainThread:141] T0 / EPISODE 2 / STEP 1.901k / MEAN REWARD 212.5 / 222 STEPS/s
+[2018-05-15 12:55:37] INFO [MainThread:141] T1 / EPISODE 3 / STEP 2.677k / MEAN REWARD 133.3 / 222 STEPS/s
+[2018-05-15 12:55:39] INFO [MainThread:141] T0 / EPISODE 3 / STEP 3.24k / MEAN REWARD 225.0 / 229 STEPS/s
+[2018-05-15 12:55:42] INFO [MainThread:141] T1 / EPISODE 4 / STEP 3.797k / MEAN REWARD 237.5 / 233 STEPS/s
+[2018-05-15 12:55:42] INFO [MainThread:141] T0 / EPISODE 4 / STEP 3.994k / MEAN REWARD 168.8 / 233 STEPS/s
+[2018-05-15 12:55:46] INFO [MainThread:141] T0 / EPISODE 5 / STEP 4.858k / MEAN REWARD 160.0 / 232 STEPS/s
+[2018-05-15 12:55:47] INFO [MainThread:141] T1 / EPISODE 5 / STEP 5.038k / MEAN REWARD 310.0 / 233 STEPS/s
+[2018-05-15 12:55:49] INFO [MainThread:141] T0 / EPISODE 6 / STEP 5.645k / MEAN REWARD 150.0 / 235 STEPS/s
+[2018-05-15 12:55:50] INFO [MainThread:141] T1 / EPISODE 6 / STEP 5.753k / MEAN REWARD 283.3 / 235 STEPS/s
+[2018-05-15 12:55:52] INFO [MainThread:141] T0 / EPISODE 7 / STEP 6.353k / MEAN REWARD 135.7 / 238 STEPS/s
+[2018-05-15 12:55:53] INFO [MainThread:141] T1 / EPISODE 7 / STEP 6.676k / MEAN REWARD 257.1 / 239 STEPS/s
+[2018-05-15 12:55:55] INFO [MainThread:141] T0 / EPISODE 8 / STEP 7.101k / MEAN REWARD 134.4 / 237 STEPS/s
+[2018-05-15 12:55:57] INFO [MainThread:141] T1 / EPISODE 8 / STEP 7.42k / MEAN REWARD 228.1 / 237 STEPS/s
+[2018-05-15 12:55:58] INFO [MainThread:141] T0 / EPISODE 9 / STEP 7.755k / MEAN REWARD 125.0 / 237 STEPS/s
+[2018-05-15 12:55:59] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-05-15 12:59:45] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/12.59
+[2018-05-15 12:59:46] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:12] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:12] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:12] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:12] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:12] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 12:59:47] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 12:59:47] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 12:59:47] INFO [MainThread:116] Starting standard services.
+[2018-05-15 12:59:47] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/12.59/model.ckpt
+[2018-05-15 12:59:47] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 12:59:47] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:13] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:13] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:13] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:13] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 12:59:48] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 12:59:48] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 12:59:48] INFO [MainThread:116] Starting standard services.
+[2018-05-15 12:59:48] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 12:59:52] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.832k / MEAN REWARD 50.0 / 206 STEPS/s
+[2018-05-15 12:59:52] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.91k / MEAN REWARD 275.0 / 203 STEPS/s
+[2018-05-15 13:00:49] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.00
+[2018-05-15 13:00:50] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:13] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:13] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 13:00:51] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:00:51] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:00:51] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:00:51] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.00/model.ckpt
+[2018-05-15 13:00:51] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:00:51] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:14] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:14] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:14] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:14] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:14] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 13:00:51] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:00:51] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:00:51] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:00:51] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:00:55] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.727k / MEAN REWARD 125.0 / 212 STEPS/s
+[2018-05-15 13:00:55] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.727k / MEAN REWARD 175.0 / 211 STEPS/s
+[2018-05-15 13:04:53] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.04
+[2018-05-15 13:04:54] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:14] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:14] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:14] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:14] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:15] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/tensorflow-rl/algorithms/actor_learner.py:255: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+[2018-05-15 13:04:54] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:04:55] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:04:55] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:04:55] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.04/model.ckpt
+[2018-05-15 13:04:55] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:04:55] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
 Instructions for updating:
 Please switch to tf.train.MonitoredTrainingSession
-[2018-05-01 19:16:15] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:15] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:15] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:15] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:15] INFO [MainThread:116] Running local_init_op.
-[2018-05-01 19:16:16] INFO [MainThread:116] Done running local_init_op.
-[2018-05-01 19:16:16] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:16] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:17] INFO [MainThread:116] Starting standard services.
-[2018-05-01 19:16:17] INFO [MainThread:116] Starting queue runners.
-[2018-05-01 19:16:37] INFO [MainThread:141] T5 / EPISODE 1 / STEP 7.222k / MEAN REWARD -21.0 / 349 STEPS/s
-[2018-05-01 19:16:39] INFO [MainThread:141] T7 / EPISODE 1 / STEP 8.07k / MEAN REWARD -21.0 / 356 STEPS/s
-[2018-05-01 19:16:41] INFO [MainThread:141] T3 / EPISODE 1 / STEP 8.568k / MEAN REWARD -21.0 / 358 STEPS/s
-[2018-05-01 19:16:42] INFO [MainThread:141] T4 / EPISODE 1 / STEP 9.152k / MEAN REWARD -21.0 / 360 STEPS/s
-[2018-05-01 19:16:42] INFO [MainThread:141] T0 / EPISODE 1 / STEP 9.32k / MEAN REWARD -21.0 / 359 STEPS/s
-[2018-05-01 19:16:43] INFO [MainThread:141] T2 / EPISODE 1 / STEP 9.564k / MEAN REWARD -20.0 / 361 STEPS/s
-[2018-05-01 19:16:43] INFO [MainThread:141] T1 / EPISODE 1 / STEP 9.57k / MEAN REWARD -21.0 / 361 STEPS/s
-[2018-05-01 19:16:48] INFO [MainThread:141] T6 / EPISODE 1 / STEP 11.403k / MEAN REWARD -19.0 / 368 STEPS/s
-[2018-05-01 19:16:57] INFO [MainThread:141] T5 / EPISODE 2 / STEP 15.033k / MEAN REWARD -21.0 / 375 STEPS/s
-[2018-05-01 19:16:59] INFO [MainThread:141] T7 / EPISODE 2 / STEP 16.086k / MEAN REWARD -21.0 / 376 STEPS/s
-[2018-05-01 19:17:00] INFO [MainThread:141] T3 / EPISODE 2 / STEP 16.533k / MEAN REWARD -21.0 / 376 STEPS/s
-[2018-05-01 19:17:03] INFO [MainThread:141] T1 / EPISODE 2 / STEP 17.562k / MEAN REWARD -21.0 / 377 STEPS/s
-[2018-05-01 19:17:04] INFO [MainThread:141] T4 / EPISODE 2 / STEP 17.813k / MEAN REWARD -20.5 / 377 STEPS/s
-[2018-05-01 19:17:04] INFO [MainThread:141] T0 / EPISODE 2 / STEP 17.964k / MEAN REWARD -21.0 / 377 STEPS/s
-[2018-05-01 19:17:05] INFO [MainThread:141] T2 / EPISODE 2 / STEP 18.131k / MEAN REWARD -20.5 / 377 STEPS/s
-[2018-05-01 19:17:14] INFO [MainThread:141] T6 / EPISODE 2 / STEP 21.961k / MEAN REWARD -20.0 / 380 STEPS/s
-[2018-05-01 19:17:21] INFO [MainThread:141] T5 / EPISODE 3 / STEP 24.767k / MEAN REWARD -21.0 / 382 STEPS/s
-[2018-05-01 19:17:25] INFO [MainThread:141] T0 / EPISODE 3 / STEP 26.206k / MEAN REWARD -20.7 / 383 STEPS/s
-[2018-05-01 19:17:26] INFO [MainThread:141] T7 / EPISODE 3 / STEP 26.547k / MEAN REWARD -20.7 / 384 STEPS/s
-[2018-05-01 19:17:29] INFO [MainThread:141] T2 / EPISODE 3 / STEP 27.732k / MEAN REWARD -20.3 / 385 STEPS/s
-[2018-05-01 19:17:29] INFO [MainThread:141] T3 / EPISODE 3 / STEP 27.786k / MEAN REWARD -20.7 / 385 STEPS/s
-[2018-05-01 19:17:30] INFO [MainThread:141] T1 / EPISODE 3 / STEP 28.418k / MEAN REWARD -20.3 / 385 STEPS/s
-[2018-05-01 19:17:35] INFO [MainThread:141] T4 / EPISODE 3 / STEP 30.316k / MEAN REWARD -20.3 / 386 STEPS/s
-[2018-05-01 19:17:37] INFO [MainThread:141] T6 / EPISODE 3 / STEP 30.934k / MEAN REWARD -20.3 / 387 STEPS/s
-[2018-05-01 19:17:42] INFO [MainThread:141] T5 / EPISODE 4 / STEP 33.27k / MEAN REWARD -21.0 / 388 STEPS/s
-[2018-05-01 19:17:48] INFO [MainThread:141] T7 / EPISODE 4 / STEP 35.58k / MEAN REWARD -20.8 / 387 STEPS/s
-[2018-05-01 19:17:49] INFO [MainThread:141] T0 / EPISODE 4 / STEP 35.773k / MEAN REWARD -20.8 / 387 STEPS/s
-[2018-05-01 19:17:51] INFO [MainThread:141] T1 / EPISODE 4 / STEP 36.609k / MEAN REWARD -20.5 / 388 STEPS/s
-[2018-05-01 19:17:51] INFO [MainThread:141] T2 / EPISODE 4 / STEP 36.759k / MEAN REWARD -20.5 / 388 STEPS/s
-[2018-05-01 19:17:53] INFO [MainThread:141] T3 / EPISODE 4 / STEP 37.456k / MEAN REWARD -20.5 / 388 STEPS/s
-[2018-05-01 19:18:00] INFO [MainThread:141] T4 / EPISODE 4 / STEP 40.428k / MEAN REWARD -20.5 / 389 STEPS/s
-[2018-05-01 19:18:02] INFO [MainThread:141] T6 / EPISODE 4 / STEP 41.173k / MEAN REWARD -20.5 / 389 STEPS/s
-[2018-05-01 19:18:06] INFO [MainThread:141] T5 / EPISODE 5 / STEP 42.495k / MEAN REWARD -21.0 / 389 STEPS/s
-[2018-05-01 19:18:11] INFO [MainThread:141] T7 / EPISODE 5 / STEP 44.043k / MEAN REWARD -20.8 / 385 STEPS/s
-[2018-05-01 19:18:13] INFO [MainThread:141] T1 / EPISODE 5 / STEP 44.514k / MEAN REWARD -20.6 / 383 STEPS/s
-[2018-05-01 19:18:13] INFO [MainThread:141] T0 / EPISODE 5 / STEP 44.67k / MEAN REWARD -20.6 / 382 STEPS/s
-[2018-05-01 19:18:16] INFO [MainThread:141] T2 / EPISODE 5 / STEP 45.263k / MEAN REWARD -20.6 / 379 STEPS/s
-[2018-05-01 19:18:18] INFO [MainThread:141] T3 / EPISODE 5 / STEP 45.788k / MEAN REWARD -20.6 / 377 STEPS/s
-[2018-05-01 19:18:31] INFO [MainThread:141] T4 / EPISODE 5 / STEP 48.918k / MEAN REWARD -20.6 / 363 STEPS/s
-[2018-05-01 19:18:41] INFO [MainThread:141] T5 / EPISODE 6 / STEP 51.042k / MEAN REWARD -21.0 / 354 STEPS/s
-[2018-05-01 19:18:42] INFO [MainThread:141] T6 / EPISODE 5 / STEP 51.433k / MEAN REWARD -20.6 / 353 STEPS/s
-[2018-05-01 19:18:49] INFO [MainThread:141] T7 / EPISODE 6 / STEP 52.934k / MEAN REWARD -20.8 / 348 STEPS/s
-[2018-05-01 19:18:52] INFO [MainThread:141] T0 / EPISODE 6 / STEP 53.825k / MEAN REWARD -20.7 / 345 STEPS/s
-[2018-05-01 19:18:55] INFO [MainThread:141] T3 / EPISODE 6 / STEP 54.422k / MEAN REWARD -20.7 / 344 STEPS/s
-[2018-05-01 19:18:58] INFO [MainThread:141] T2 / EPISODE 6 / STEP 55.234k / MEAN REWARD -20.7 / 341 STEPS/s
-[2018-05-01 19:18:59] INFO [MainThread:141] T1 / EPISODE 6 / STEP 55.48k / MEAN REWARD -20.7 / 341 STEPS/s
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
-[2018-05-01 19:19:17] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
-[2018-05-01 19:19:17] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
-[2018-05-01 19:19:21] INFO [MainThread:141] T7 / EPISODE 7 / STEP 60.022k / MEAN REWARD -20.7 / 325 STEPS/s
-[2018-05-01 19:19:36] INFO [MainThread:141] T7 / EPISODE 8 / STEP 61.283k / MEAN REWARD -20.5 / 308 STEPS/s
-[2018-05-01 19:19:48] INFO [MainThread:141] T7 / EPISODE 9 / STEP 62.446k / MEAN REWARD -20.4 / 295 STEPS/s
-[2018-05-01 19:20:04] INFO [MainThread:141] T7 / EPISODE 10 / STEP 63.954k / MEAN REWARD -20.3 / 281 STEPS/s
-[2018-05-01 19:20:16] INFO [MainThread:141] T7 / EPISODE 11 / STEP 65.001k / MEAN REWARD -20.4 / 271 STEPS/s
-[2018-05-01 19:20:31] INFO [MainThread:141] T7 / EPISODE 12 / STEP 66.411k / MEAN REWARD -20.4 / 261 STEPS/s
-[2018-05-01 19:20:43] INFO [MainThread:141] T7 / EPISODE 13 / STEP 67.453k / MEAN REWARD -20.5 / 253 STEPS/s
-[2018-05-01 19:20:58] INFO [MainThread:141] T7 / EPISODE 14 / STEP 68.86k / MEAN REWARD -20.4 / 244 STEPS/s
-[2018-05-01 19:21:12] INFO [MainThread:141] T7 / EPISODE 15 / STEP 70.137k / MEAN REWARD -20.4 / 237 STEPS/s
-[2018-05-01 19:21:26] INFO [MainThread:141] T7 / EPISODE 16 / STEP 71.466k / MEAN REWARD -20.4 / 231 STEPS/s
-[2018-05-01 19:21:42] INFO [MainThread:141] T7 / EPISODE 17 / STEP 72.901k / MEAN REWARD -20.3 / 224 STEPS/s
-[2018-05-01 19:21:55] INFO [MainThread:141] T7 / EPISODE 18 / STEP 74.11k / MEAN REWARD -20.3 / 219 STEPS/s
-[2018-05-01 19:22:06] INFO [MainThread:141] T7 / EPISODE 19 / STEP 75.123k / MEAN REWARD -20.3 / 215 STEPS/s
-[2018-05-01 19:22:18] INFO [MainThread:141] T7 / EPISODE 20 / STEP 76.227k / MEAN REWARD -20.4 / 211 STEPS/s
-[2018-05-01 19:22:29] INFO [MainThread:141] T7 / EPISODE 21 / STEP 77.29k / MEAN REWARD -20.4 / 207 STEPS/s
-[2018-05-01 19:22:45] INFO [MainThread:141] T7 / EPISODE 22 / STEP 78.731k / MEAN REWARD -20.4 / 203 STEPS/s
-[2018-05-01 19:22:57] INFO [MainThread:141] T7 / EPISODE 23 / STEP 79.895k / MEAN REWARD -20.4 / 199 STEPS/s
-[2018-05-01 19:23:09] INFO [MainThread:141] T7 / EPISODE 24 / STEP 80.988k / MEAN REWARD -20.4 / 197 STEPS/s
-[2018-05-01 19:23:21] INFO [MainThread:141] T7 / EPISODE 25 / STEP 82.173k / MEAN REWARD -20.4 / 194 STEPS/s
-[2018-05-01 19:23:33] INFO [MainThread:141] T7 / EPISODE 26 / STEP 83.303k / MEAN REWARD -20.4 / 191 STEPS/s
-[2018-05-01 19:23:46] INFO [MainThread:141] T7 / EPISODE 27 / STEP 84.495k / MEAN REWARD -20.4 / 188 STEPS/s
-[2018-05-01 19:23:58] INFO [MainThread:141] T7 / EPISODE 28 / STEP 85.628k / MEAN REWARD -20.5 / 186 STEPS/s
-[2018-05-01 19:24:09] INFO [MainThread:141] T7 / EPISODE 29 / STEP 86.725k / MEAN REWARD -20.5 / 183 STEPS/s
-[2018-05-01 19:24:23] INFO [MainThread:141] T7 / EPISODE 30 / STEP 87.975k / MEAN REWARD -20.5 / 181 STEPS/s
-[2018-05-01 19:24:35] INFO [MainThread:141] T7 / EPISODE 31 / STEP 89.152k / MEAN REWARD -20.5 / 179 STEPS/s
-[2018-05-01 19:24:47] INFO [MainThread:141] T7 / EPISODE 32 / STEP 90.258k / MEAN REWARD -20.5 / 177 STEPS/s
-[2018-05-01 19:24:50] INFO [MainThread:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:24:50] INFO [Dummy-1:37] Signal 2 detected, cleaning up.
-[2018-05-01 19:24:50] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, 'A3CLearner' object has no attribute 'session'
+[2018-05-15 13:04:55] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:04:55] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:04:55] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:04:55] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:04:59] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.683k / MEAN REWARD 50.0 / 198 STEPS/s
+[2018-05-15 13:05:00] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.87k / MEAN REWARD 150.0 / 195 STEPS/s
+[2018-05-15 13:05:59] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.05
+[2018-05-15 13:06:00] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:06:00] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:06:00] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:06:00] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:06:00] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.05/model.ckpt
+[2018-05-15 13:06:00] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:06:01] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:06:01] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:06:01] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:06:01] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:06:01] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:06:05] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.756k / MEAN REWARD 200.0 / 197 STEPS/s
+[2018-05-15 13:06:05] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.777k / MEAN REWARD 50.0 / 195 STEPS/s
+[2018-05-15 13:06:05] INFO [MainThread:185] All training threads finished!
+[2018-05-15 13:06:05] INFO [MainThread:186] Use seed=4064428868 to reproduce
+[2018-05-15 13:09:17] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.09
+[2018-05-15 13:09:18] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:09:19] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:09:19] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:09:19] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:09:19] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.09/model.ckpt
+[2018-05-15 13:09:19] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:09:19] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:09:19] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:09:19] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:09:19] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:09:19] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:09:23] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.692k / MEAN REWARD 75.0 / 213 STEPS/s
+[2018-05-15 13:09:23] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.759k / MEAN REWARD 50.0 / 209 STEPS/s
+[2018-05-15 13:09:23] INFO [MainThread:186] All training threads finished!
+[2018-05-15 13:09:23] INFO [MainThread:187] Use seed=2408027586 to reproduce
+[2018-05-15 13:11:06] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.11
+[2018-05-15 13:11:07] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:11:08] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:11:08] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:11:08] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:11:08] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.11/model.ckpt
+[2018-05-15 13:11:08] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:11:08] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:11:08] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:11:08] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:11:08] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:11:08] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:11:12] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.726k / MEAN REWARD 0.0 / 196 STEPS/s
+[2018-05-15 13:11:13] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.87k / MEAN REWARD 525.0 / 191 STEPS/s
+[2018-05-15 13:11:13] INFO [MainThread:186] All training threads finished!
+[2018-05-15 13:11:13] INFO [MainThread:187] Use seed=1588666165 to reproduce
+[2018-05-15 13:12:31] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.12
+[2018-05-15 13:12:33] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:12:33] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:12:33] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:12:33] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:12:33] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.12/model.ckpt
+[2018-05-15 13:12:33] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:12:33] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:12:34] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:12:34] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:12:34] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:12:34] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:12:38] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.756k / MEAN REWARD 200.0 / 198 STEPS/s
+[2018-05-15 13:12:38] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.835k / MEAN REWARD 100.0 / 195 STEPS/s
+[2018-05-15 13:12:38] INFO [MainThread:186] All training threads finished!
+[2018-05-15 13:12:38] INFO [MainThread:187] Use seed=2820610842 to reproduce
+[2018-05-15 13:15:01] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.15
+[2018-05-15 13:15:03] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:15:03] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:15:03] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:15:03] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:15:03] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.15/model.ckpt
+[2018-05-15 13:15:03] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:15:03] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:15:04] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:15:04] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:15:04] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:15:04] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:15:08] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.782k / MEAN REWARD 125.0 / 209 STEPS/s
+[2018-05-15 13:15:08] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.795k / MEAN REWARD 75.0 / 208 STEPS/s
+[2018-05-15 13:15:08] INFO [MainThread:186] All training threads finished!
+[2018-05-15 13:15:08] INFO [MainThread:187] Use seed=238826802 to reproduce
+[2018-05-15 13:19:02] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.19
+[2018-05-15 13:19:03] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:19:03] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:19:03] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:19:03] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:19:03] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.19/model.ckpt
+[2018-05-15 13:19:03] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:19:03] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:19:04] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:19:04] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:19:04] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:19:04] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:19:09] INFO [MainThread:141] T1 / EPISODE 1 / STEP 1.007k / MEAN REWARD 225.0 / 224 STEPS/s
+[2018-05-15 13:19:09] INFO [MainThread:141] T0 / EPISODE 1 / STEP 1.041k / MEAN REWARD 200.0 / 219 STEPS/s
+[2018-05-15 13:19:09] INFO [MainThread:186] All training threads finished!
+[2018-05-15 13:19:09] INFO [MainThread:187] Use seed=825675570 to reproduce
+[2018-05-15 13:21:08] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.21
+[2018-05-15 13:21:09] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:21:10] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:21:10] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:21:10] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:21:10] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.21/model.ckpt
+[2018-05-15 13:21:10] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:21:10] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:260: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:21:10] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:21:10] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:21:10] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:21:10] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:21:14] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.826k / MEAN REWARD 25.0 / 219 STEPS/s
+[2018-05-15 13:21:14] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.842k / MEAN REWARD 75.0 / 214 STEPS/s
+[2018-05-15 13:21:14] INFO [MainThread:187] All training threads finished!
+[2018-05-15 13:21:14] INFO [MainThread:188] Use seed=1365595251 to reproduce
+[2018-05-15 13:38:11] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.38
+[2018-05-15 13:38:11] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:39:04] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.39
+[2018-05-15 13:39:04] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:39:26] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.39
+[2018-05-15 13:39:26] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:39:27] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:39:27] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:39:27] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:39:27] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:39:27] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:39:27] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.39/model.ckpt
+[2018-05-15 13:39:27] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:39:27] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:39:28] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:39:28] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:39:28] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:39:28] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:39:34] INFO [MainThread:188] T0 / EPISODE 1 / STEP 0.821k / REWARD 175.0 / 137 STEPS/s
+[2018-05-15 13:39:34] INFO [MainThread:188] T1 / EPISODE 1 / STEP 0.855k / REWARD 150.0 / 136 STEPS/s
+[2018-05-15 13:39:34] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:39:34] INFO [MainThread:183] Use seed=1146024681 to reproduce
+[2018-05-15 13:43:49] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.43
+[2018-05-15 13:43:50] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:43:50] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:43:50] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:43:51] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:43:51] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:43:51] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:43:51] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.43/model.ckpt
+[2018-05-15 13:43:51] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:43:51] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:43:51] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:43:51] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:43:52] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:43:52] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:43:58] INFO [MainThread:188] T0 / EPISODE 1 / STEP 0.889k / REWARD 250.0 / 138 STEPS/s
+[2018-05-15 13:43:58] INFO [MainThread:188] T1 / EPISODE 1 / STEP 0.915k / REWARD 150.0 / 136 STEPS/s
+[2018-05-15 13:43:58] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:43:58] INFO [MainThread:183] Use seed=2553894685 to reproduce
+[2018-05-15 13:45:03] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.45
+[2018-05-15 13:45:03] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:45:04] WARNING [MainThread:23] Using experimental class 'PseudoCountA3CLearner' -- See docstring for more details:
+
+    Attempt at replicating the A3C+ model from the paper 'Unifying Count-Based Exploration and Intrinsic Motivation' (https://arxiv.org/abs/1606.01868)
+    
+[2018-05-15 13:45:04] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:45:04] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:45:04] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:45:05] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:45:05] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.45/model.ckpt
+[2018-05-15 13:45:05] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:45:05] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:45:05] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:45:05] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:45:05] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:45:05] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:45:11] INFO [MainThread:188] T0 / EPISODE 1 / STEP 0.78k / REWARD 50.0 / 137 STEPS/s
+[2018-05-15 13:45:11] INFO [MainThread:188] T1 / EPISODE 1 / STEP 0.807k / REWARD 75.0 / 135 STEPS/s
+[2018-05-15 13:45:11] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:45:11] INFO [MainThread:183] Use seed=936089544 to reproduce
+[2018-05-15 13:49:18] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.49
+[2018-05-15 13:49:19] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:49:20] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:49:20] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:49:20] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:49:20] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.49/model.ckpt
+[2018-05-15 13:49:20] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:49:20] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:49:20] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:49:20] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:49:21] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:49:21] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:49:24] INFO [MainThread:141] T0 / EPISODE 1 / STEP 0.702k / MEAN REWARD 75.0 / 194 STEPS/s
+[2018-05-15 13:49:24] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:49:25] INFO [MainThread:141] T1 / EPISODE 1 / STEP 0.804k / MEAN REWARD 150.0 / 191 STEPS/s
+[2018-05-15 13:49:25] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:49:25] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:49:25] INFO [MainThread:183] Use seed=553083855 to reproduce
+[2018-05-15 13:52:14] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.52
+[2018-05-15 13:52:16] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:52:16] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:52:16] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:52:16] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:52:16] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.52/model.ckpt
+[2018-05-15 13:52:16] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:52:16] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:52:17] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:52:17] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:52:17] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:52:17] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:52:21] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.871k / MEAN REWARD 200.0 / 211 STEPS/s
+[2018-05-15 13:52:21] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:52:21] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.88k / MEAN REWARD 100.0 / 209 STEPS/s
+[2018-05-15 13:52:21] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:52:21] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:52:21] INFO [MainThread:183] Use seed=3037681198 to reproduce
+[2018-05-15 13:54:48] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.54
+[2018-05-15 13:54:49] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:54:49] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:54:49] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:54:49] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:54:49] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.54/model.ckpt
+[2018-05-15 13:54:49] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:54:49] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:54:50] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:54:50] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:54:50] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:54:50] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:54:54] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.778k / MEAN REWARD 25.0 / 211 STEPS/s
+[2018-05-15 13:54:54] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:54:54] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.81k / MEAN REWARD 100.0 / 207 STEPS/s
+[2018-05-15 13:54:54] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:54:54] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:54:54] INFO [MainThread:183] Use seed=2570591233 to reproduce
+[2018-05-15 13:56:41] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.56
+[2018-05-15 13:56:42] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:56:43] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:56:43] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:56:43] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:56:43] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/13.56/model.ckpt
+[2018-05-15 13:56:43] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:56:43] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:265: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 13:56:43] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 13:56:44] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 13:56:44] INFO [MainThread:116] Starting standard services.
+[2018-05-15 13:56:44] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 13:56:48] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.848k / MEAN REWARD 200.0 / 215 STEPS/s
+[2018-05-15 13:56:48] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:56:48] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.917k / MEAN REWARD 150.0 / 210 STEPS/s
+[2018-05-15 13:56:48] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 13:56:48] INFO [MainThread:182] All training threads finished!
+[2018-05-15 13:56:48] INFO [MainThread:183] Use seed=2832876247 to reproduce
+[2018-05-15 13:59:08] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/13.59
+[2018-05-15 14:00:50] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/14.00
+[2018-05-15 14:00:51] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:00:52] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:00:52] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:00:52] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:00:52] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:00:52] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/14.00/model.ckpt
+[2018-05-15 14:00:52] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:00:53] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:00:53] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:00:53] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:00:53] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:00:57] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.849k / MEAN REWARD 75.0 / 216 STEPS/s
+[2018-05-15 14:00:57] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:00:57] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.979k / MEAN REWARD 600.0 / 210 STEPS/s
+[2018-05-15 14:00:57] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:00:58] INFO [MainThread:182] All training threads finished!
+[2018-05-15 14:00:58] INFO [MainThread:183] Use seed=3480599599 to reproduce
+[2018-05-15 14:07:16] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/14.07
+[2018-05-15 14:07:18] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:07:18] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:07:18] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:07:18] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:07:18] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/14.07/model.ckpt
+[2018-05-15 14:07:18] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:07:18] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:07:19] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:07:19] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:07:19] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:07:19] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:07:24] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.789k / MEAN REWARD 75.0 / 165 STEPS/s
+[2018-05-15 14:07:24] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:07:24] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.816k / MEAN REWARD 225.0 / 162 STEPS/s
+[2018-05-15 14:07:24] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:07:24] INFO [MainThread:182] All training threads finished!
+[2018-05-15 14:07:24] INFO [MainThread:183] Use seed=1372280613 to reproduce
+[2018-05-15 14:08:03] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/14.08
+[2018-05-15 14:08:04] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:08:05] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:08:05] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:08:05] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:08:05] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/14.08/model.ckpt
+[2018-05-15 14:08:05] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:08:05] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:08:05] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:08:05] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:08:06] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:08:06] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:08:09] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.747k / MEAN REWARD 0.0 / 210 STEPS/s
+[2018-05-15 14:08:09] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:08:10] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.806k / MEAN REWARD 125.0 / 205 STEPS/s
+[2018-05-15 14:08:10] INFO [MainThread:116] Error reported to Coordinator: <class 'AttributeError'>, '_csv.writer' object has no attribute 'write'
+[2018-05-15 14:08:10] INFO [MainThread:182] All training threads finished!
+[2018-05-15 14:08:10] INFO [MainThread:183] Use seed=1708056714 to reproduce
+[2018-05-15 14:08:57] INFO [MainThread:88] logging summaries to /tmp/summary_logs/Qbert-v0/05.15/14.08
+[2018-05-15 14:08:58] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:08:58] INFO [MainThread:116] Restoring parameters from /tmp/summary_logs/Qbert-v0/05.15/14.08/model.ckpt
+[2018-05-15 14:08:58] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:08:58] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:08:59] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:08:59] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Qbert-v0/05.15/14.08/model.ckpt
+[2018-05-15 14:08:59] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:08:59] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-05-15 14:08:59] INFO [MainThread:116] Running local_init_op.
+[2018-05-15 14:08:59] INFO [MainThread:116] Done running local_init_op.
+[2018-05-15 14:08:59] INFO [MainThread:116] Starting standard services.
+[2018-05-15 14:08:59] INFO [MainThread:116] Starting queue runners.
+[2018-05-15 14:09:03] INFO [MainThread:142] T1 / EPISODE 1 / STEP 0.723k / MEAN REWARD 50.0 / 210 STEPS/s
+[2018-05-15 14:09:03] INFO [MainThread:142] T0 / EPISODE 1 / STEP 0.782k / MEAN REWARD 0.0 / 209 STEPS/s
+[2018-05-15 14:09:06] INFO [MainThread:142] T1 / EPISODE 2 / STEP 1.48k / MEAN REWARD 37.5 / 230 STEPS/s
+[2018-05-15 14:09:07] INFO [MainThread:142] T0 / EPISODE 2 / STEP 1.689k / MEAN REWARD 100.0 / 230 STEPS/s
+[2018-05-15 14:09:10] INFO [MainThread:142] T1 / EPISODE 3 / STEP 2.506k / MEAN REWARD 216.7 / 238 STEPS/s
+[2018-05-15 14:09:10] INFO [MainThread:142] T0 / EPISODE 3 / STEP 2.512k / MEAN REWARD 100.0 / 237 STEPS/s
+[2018-05-15 14:09:13] INFO [MainThread:142] T1 / EPISODE 4 / STEP 3.335k / MEAN REWARD 200.0 / 241 STEPS/s
+[2018-05-15 14:09:13] INFO [MainThread:142] T0 / EPISODE 4 / STEP 3.35k / MEAN REWARD 131.2 / 240 STEPS/s
+[2018-05-15 14:09:17] INFO [MainThread:142] T1 / EPISODE 5 / STEP 4.197k / MEAN REWARD 190.0 / 243 STEPS/s
+[2018-05-15 14:09:17] INFO [MainThread:142] T0 / EPISODE 5 / STEP 4.225k / MEAN REWARD 140.0 / 241 STEPS/s
+[2018-05-15 14:09:20] INFO [MainThread:142] T0 / EPISODE 6 / STEP 5.134k / MEAN REWARD 137.5 / 245 STEPS/s
+[2018-05-15 14:09:21] INFO [MainThread:142] T1 / EPISODE 6 / STEP 5.199k / MEAN REWARD 183.3 / 245 STEPS/s
+[2018-05-15 14:09:23] INFO [MainThread:142] T1 / EPISODE 7 / STEP 5.956k / MEAN REWARD 157.1 / 247 STEPS/s
+[2018-05-15 14:09:24] INFO [MainThread:142] T0 / EPISODE 7 / STEP 5.977k / MEAN REWARD 128.6 / 247 STEPS/s
+[2018-05-15 14:09:27] INFO [MainThread:142] T1 / EPISODE 8 / STEP 6.75k / MEAN REWARD 146.9 / 244 STEPS/s
+[2018-05-15 14:09:27] INFO [MainThread:142] T0 / EPISODE 8 / STEP 6.811k / MEAN REWARD 137.5 / 244 STEPS/s
+[2018-05-15 14:09:30] INFO [MainThread:142] T0 / EPISODE 9 / STEP 7.564k / MEAN REWARD 136.1 / 246 STEPS/s
+[2018-05-15 14:09:30] INFO [MainThread:142] T1 / EPISODE 9 / STEP 7.626k / MEAN REWARD 138.9 / 246 STEPS/s
+[2018-05-15 14:09:33] INFO [MainThread:142] T0 / EPISODE 10 / STEP 8.383k / MEAN REWARD 127.5 / 247 STEPS/s
+[2018-05-15 14:09:33] INFO [MainThread:142] T1 / EPISODE 10 / STEP 8.434k / MEAN REWARD 137.5 / 247 STEPS/s
+[2018-05-15 14:09:36] INFO [MainThread:142] T1 / EPISODE 11 / STEP 9.173k / MEAN REWARD 140.9 / 247 STEPS/s
+[2018-05-15 14:09:37] INFO [MainThread:142] T0 / EPISODE 11 / STEP 9.265k / MEAN REWARD 134.1 / 246 STEPS/s
+[2018-05-15 14:09:40] INFO [MainThread:142] T1 / EPISODE 12 / STEP 9.954k / MEAN REWARD 135.4 / 245 STEPS/s
+[2018-05-15 14:09:41] INFO [MainThread:142] T0 / EPISODE 12 / STEP 10.106k / MEAN REWARD 127.1 / 245 STEPS/s
+[2018-05-15 14:09:44] INFO [MainThread:142] T1 / EPISODE 13 / STEP 10.898k / MEAN REWARD 142.3 / 246 STEPS/s
+[2018-05-15 14:09:44] INFO [MainThread:142] T0 / EPISODE 13 / STEP 11.039k / MEAN REWARD 125.0 / 246 STEPS/s
+[2018-05-15 14:09:47] INFO [MainThread:142] T0 / EPISODE 14 / STEP 11.848k / MEAN REWARD 119.6 / 246 STEPS/s
+[2018-05-15 14:09:48] INFO [MainThread:142] T1 / EPISODE 14 / STEP 11.881k / MEAN REWARD 164.3 / 246 STEPS/s
+[2018-05-15 14:09:51] INFO [MainThread:142] T0 / EPISODE 15 / STEP 12.786k / MEAN REWARD 126.7 / 246 STEPS/s
+[2018-05-15 14:09:52] INFO [MainThread:142] T1 / EPISODE 15 / STEP 12.851k / MEAN REWARD 171.7 / 245 STEPS/s
+[2018-05-15 14:09:55] INFO [MainThread:142] T1 / EPISODE 16 / STEP 13.685k / MEAN REWARD 168.8 / 244 STEPS/s
+[2018-05-15 14:09:55] INFO [MainThread:142] T0 / EPISODE 16 / STEP 13.707k / MEAN REWARD 125.0 / 244 STEPS/s
+[2018-05-15 14:09:59] INFO [MainThread:142] T0 / EPISODE 17 / STEP 14.543k / MEAN REWARD 123.5 / 244 STEPS/s
+[2018-05-15 14:10:00] INFO [MainThread:142] T1 / EPISODE 17 / STEP 14.796k / MEAN REWARD 170.6 / 245 STEPS/s
+[2018-05-15 14:10:03] INFO [MainThread:142] T0 / EPISODE 18 / STEP 15.622k / MEAN REWARD 126.4 / 246 STEPS/s
+[2018-05-15 14:10:03] INFO [MainThread:142] T1 / EPISODE 18 / STEP 15.634k / MEAN REWARD 165.3 / 246 STEPS/s
+[2018-05-15 14:10:06] INFO [MainThread:142] T1 / EPISODE 19 / STEP 16.41k / MEAN REWARD 157.9 / 246 STEPS/s
+[2018-05-15 14:10:06] INFO [MainThread:142] T0 / EPISODE 19 / STEP 16.503k / MEAN REWARD 125.0 / 246 STEPS/s
+[2018-05-15 14:10:09] INFO [MainThread:142] T1 / EPISODE 20 / STEP 17.189k / MEAN REWARD 152.5 / 246 STEPS/s
+[2018-05-15 14:10:10] INFO [MainThread:142] T0 / EPISODE 20 / STEP 17.322k / MEAN REWARD 120.0 / 246 STEPS/s
+[2018-05-15 14:10:12] INFO [MainThread:142] T1 / EPISODE 21 / STEP 18.03k / MEAN REWARD 148.8 / 247 STEPS/s
+[2018-05-15 14:10:12] INFO [MainThread:142] T0 / EPISODE 21 / STEP 18.082k / MEAN REWARD 114.3 / 247 STEPS/s
+[2018-05-15 14:10:15] INFO [MainThread:142] T1 / EPISODE 22 / STEP 18.819k / MEAN REWARD 144.3 / 247 STEPS/s
+[2018-05-15 14:10:16] INFO [MainThread:142] T0 / EPISODE 22 / STEP 19.053k / MEAN REWARD 118.2 / 248 STEPS/s
+[2018-05-15 14:10:18] INFO [MainThread:142] T1 / EPISODE 23 / STEP 19.592k / MEAN REWARD 143.5 / 248 STEPS/s
+[2018-05-15 14:10:21] INFO [MainThread:142] T0 / EPISODE 23 / STEP 20.267k / MEAN REWARD 128.3 / 248 STEPS/s
+[2018-05-15 14:10:21] INFO [MainThread:142] T1 / EPISODE 24 / STEP 20.403k / MEAN REWARD 140.6 / 249 STEPS/s
+[2018-05-15 14:10:24] INFO [MainThread:142] T0 / EPISODE 24 / STEP 21.049k / MEAN REWARD 126.0 / 249 STEPS/s
+[2018-05-15 14:10:24] INFO [MainThread:142] T1 / EPISODE 25 / STEP 21.195k / MEAN REWARD 137.0 / 249 STEPS/s
+[2018-05-15 14:10:27] INFO [MainThread:142] T0 / EPISODE 25 / STEP 21.875k / MEAN REWARD 127.0 / 249 STEPS/s
+[2018-05-15 14:10:28] INFO [MainThread:142] T1 / EPISODE 26 / STEP 22.053k / MEAN REWARD 134.6 / 249 STEPS/s
+[2018-05-15 14:10:30] INFO [MainThread:142] T0 / EPISODE 26 / STEP 22.616k / MEAN REWARD 126.0 / 250 STEPS/s
+[2018-05-15 14:10:31] INFO [MainThread:142] T1 / EPISODE 27 / STEP 22.924k / MEAN REWARD 137.0 / 249 STEPS/s
+[2018-05-15 14:10:34] INFO [MainThread:142] T0 / EPISODE 27 / STEP 23.599k / MEAN REWARD 128.7 / 250 STEPS/s
+[2018-05-15 14:10:35] INFO [MainThread:142] T1 / EPISODE 28 / STEP 23.892k / MEAN REWARD 149.1 / 250 STEPS/s
+[2018-05-15 14:10:37] INFO [MainThread:142] T0 / EPISODE 28 / STEP 24.512k / MEAN REWARD 131.2 / 250 STEPS/s
+[2018-05-15 14:10:39] INFO [MainThread:142] T1 / EPISODE 29 / STEP 24.962k / MEAN REWARD 164.7 / 251 STEPS/s
+[2018-05-15 14:10:40] INFO [MainThread:142] T0 / EPISODE 29 / STEP 25.273k / MEAN REWARD 126.7 / 251 STEPS/s
+[2018-05-15 14:10:42] INFO [MainThread:142] T1 / EPISODE 30 / STEP 25.749k / MEAN REWARD 160.8 / 251 STEPS/s
+[2018-05-15 14:10:43] INFO [MainThread:142] T0 / EPISODE 30 / STEP 26.064k / MEAN REWARD 124.2 / 250 STEPS/s
+[2018-05-15 14:10:47] INFO [MainThread:142] T1 / EPISODE 31 / STEP 26.86k / MEAN REWARD 172.6 / 249 STEPS/s
+[2018-05-15 14:10:47] INFO [MainThread:142] T0 / EPISODE 31 / STEP 26.865k / MEAN REWARD 121.8 / 249 STEPS/s
+[2018-05-15 14:10:50] INFO [MainThread:142] T1 / EPISODE 32 / STEP 27.647k / MEAN REWARD 169.5 / 249 STEPS/s
+[2018-05-15 14:10:51] INFO [MainThread:142] T0 / EPISODE 32 / STEP 27.724k / MEAN REWARD 120.3 / 249 STEPS/s
+[2018-05-15 14:10:54] INFO [MainThread:142] T0 / EPISODE 33 / STEP 28.528k / MEAN REWARD 118.2 / 249 STEPS/s
+[2018-05-15 14:10:54] INFO [MainThread:142] T1 / EPISODE 33 / STEP 28.53k / MEAN REWARD 169.7 / 249 STEPS/s
+[2018-05-15 14:10:57] INFO [MainThread:142] T1 / EPISODE 34 / STEP 29.244k / MEAN REWARD 167.6 / 249 STEPS/s
+[2018-05-15 14:10:57] INFO [MainThread:142] T0 / EPISODE 34 / STEP 29.315k / MEAN REWARD 115.4 / 249 STEPS/s
+[2018-05-15 14:11:00] INFO [MainThread:142] T1 / EPISODE 35 / STEP 30.001k / MEAN REWARD 163.6 / 249 STEPS/s
+[2018-05-15 14:11:00] INFO [MainThread:142] T0 / EPISODE 35 / STEP 30.103k / MEAN REWARD 112.1 / 249 STEPS/s
+[2018-05-15 14:11:02] INFO [MainThread:142] T1 / EPISODE 36 / STEP 30.677k / MEAN REWARD 160.4 / 249 STEPS/s
+[2018-05-15 14:11:03] INFO [MainThread:142] T0 / EPISODE 36 / STEP 30.881k / MEAN REWARD 109.7 / 249 STEPS/s
+[2018-05-15 14:11:06] INFO [MainThread:142] T0 / EPISODE 37 / STEP 31.658k / MEAN REWARD 108.1 / 250 STEPS/s
+[2018-05-15 14:11:07] INFO [MainThread:142] T1 / EPISODE 37 / STEP 31.8k / MEAN REWARD 170.9 / 249 STEPS/s
+[2018-05-15 14:11:09] INFO [MainThread:142] T0 / EPISODE 38 / STEP 32.426k / MEAN REWARD 106.6 / 250 STEPS/s
+[2018-05-15 14:11:10] INFO [MainThread:142] T1 / EPISODE 38 / STEP 32.669k / MEAN REWARD 168.4 / 250 STEPS/s
+[2018-05-15 14:11:13] INFO [MainThread:142] T0 / EPISODE 39 / STEP 33.399k / MEAN REWARD 108.3 / 250 STEPS/s
+[2018-05-15 14:11:14] INFO [MainThread:142] T1 / EPISODE 39 / STEP 33.735k / MEAN REWARD 169.2 / 250 STEPS/s
+[2018-05-15 14:11:16] INFO [MainThread:142] T0 / EPISODE 40 / STEP 34.331k / MEAN REWARD 110.6 / 250 STEPS/s
+[2018-05-15 14:11:17] INFO [MainThread:142] T1 / EPISODE 40 / STEP 34.529k / MEAN REWARD 165.6 / 250 STEPS/s
+[2018-05-15 14:11:20] INFO [MainThread:142] T0 / EPISODE 41 / STEP 35.241k / MEAN REWARD 109.8 / 250 STEPS/s
+[2018-05-15 14:11:21] INFO [MainThread:142] T1 / EPISODE 41 / STEP 35.527k / MEAN REWARD 166.5 / 250 STEPS/s
+[2018-05-15 14:11:25] INFO [MainThread:142] T0 / EPISODE 42 / STEP 36.244k / MEAN REWARD 110.1 / 249 STEPS/s
+[2018-05-15 14:11:25] INFO [MainThread:142] T1 / EPISODE 42 / STEP 36.365k / MEAN REWARD 163.7 / 249 STEPS/s
+[2018-05-15 14:11:28] INFO [MainThread:142] T1 / EPISODE 43 / STEP 37.156k / MEAN REWARD 163.4 / 249 STEPS/s
+[2018-05-15 14:11:29] INFO [MainThread:142] T0 / EPISODE 43 / STEP 37.237k / MEAN REWARD 112.8 / 249 STEPS/s
+[2018-05-15 14:11:33] INFO [MainThread:142] T1 / EPISODE 44 / STEP 38.186k / MEAN REWARD 163.1 / 249 STEPS/s
+[2018-05-15 14:11:34] INFO [MainThread:142] T0 / EPISODE 44 / STEP 38.496k / MEAN REWARD 119.3 / 249 STEPS/s
+[2018-05-15 14:11:36] INFO [MainThread:142] T0 / EPISODE 45 / STEP 39.159k / MEAN REWARD 117.8 / 249 STEPS/s
+[2018-05-15 14:11:37] INFO [MainThread:142] T1 / EPISODE 45 / STEP 39.296k / MEAN REWARD 165.0 / 249 STEPS/s
+[2018-05-15 14:11:40] INFO [MainThread:142] T1 / EPISODE 46 / STEP 40.129k / MEAN REWARD 164.7 / 249 STEPS/s
+[2018-05-15 14:11:41] INFO [MainThread:142] T0 / EPISODE 46 / STEP 40.288k / MEAN REWARD 125.5 / 249 STEPS/s
+[2018-05-15 14:11:43] INFO [MainThread:142] T1 / EPISODE 47 / STEP 40.854k / MEAN REWARD 161.2 / 249 STEPS/s
+[2018-05-15 14:11:45] INFO [MainThread:142] T0 / EPISODE 47 / STEP 41.135k / MEAN REWARD 125.5 / 249 STEPS/s
+[2018-05-15 14:11:47] INFO [MainThread:142] T1 / EPISODE 48 / STEP 41.62k / MEAN REWARD 157.8 / 248 STEPS/s
+[2018-05-15 14:11:48] INFO [MainThread:142] T0 / EPISODE 48 / STEP 41.938k / MEAN REWARD 123.4 / 249 STEPS/s
+[2018-05-15 14:11:51] INFO [MainThread:142] T1 / EPISODE 49 / STEP 42.597k / MEAN REWARD 165.3 / 248 STEPS/s
+[2018-05-15 14:11:52] INFO [MainThread:142] T0 / EPISODE 49 / STEP 42.75k / MEAN REWARD 121.9 / 248 STEPS/s
+[2018-05-15 14:11:56] INFO [MainThread:142] T1 / EPISODE 50 / STEP 43.34k / MEAN REWARD 164.0 / 245 STEPS/s
+[2018-05-15 14:11:58] INFO [MainThread:142] T0 / EPISODE 50 / STEP 43.597k / MEAN REWARD 127.0 / 244 STEPS/s
+[2018-05-15 14:12:02] INFO [MainThread:142] T1 / EPISODE 51 / STEP 44.27k / MEAN REWARD 164.2 / 242 STEPS/s
+[2018-05-15 14:12:04] INFO [MainThread:142] T0 / EPISODE 51 / STEP 44.5k / MEAN REWARD 127.5 / 241 STEPS/s
+[2018-05-15 14:12:08] INFO [MainThread:142] T0 / EPISODE 52 / STEP 45.198k / MEAN REWARD 126.0 / 239 STEPS/s
+[2018-05-15 14:12:09] INFO [MainThread:142] T1 / EPISODE 52 / STEP 45.365k / MEAN REWARD 169.2 / 239 STEPS/s
+[2018-05-15 14:12:15] INFO [MainThread:142] T1 / EPISODE 53 / STEP 46.157k / MEAN REWARD 168.9 / 236 STEPS/s
+[2018-05-15 14:12:16] INFO [MainThread:142] T0 / EPISODE 53 / STEP 46.338k / MEAN REWARD 126.9 / 235 STEPS/s
+[2018-05-15 14:12:20] INFO [MainThread:142] T1 / EPISODE 54 / STEP 46.93k / MEAN REWARD 165.7 / 234 STEPS/s
+[2018-05-15 14:12:23] INFO [MainThread:142] T0 / EPISODE 54 / STEP 47.353k / MEAN REWARD 126.9 / 233 STEPS/s
+[2018-05-15 14:12:25] INFO [MainThread:142] T1 / EPISODE 55 / STEP 47.753k / MEAN REWARD 164.1 / 232 STEPS/s
+[2018-05-15 14:12:28] INFO [MainThread:142] T0 / EPISODE 55 / STEP 48.236k / MEAN REWARD 125.5 / 231 STEPS/s
+[2018-05-15 14:12:31] INFO [MainThread:142] T1 / EPISODE 56 / STEP 48.639k / MEAN REWARD 163.4 / 230 STEPS/s
+[2018-05-15 14:12:35] INFO [MainThread:142] T0 / EPISODE 56 / STEP 49.22k / MEAN REWARD 131.2 / 228 STEPS/s
+[2018-05-15 14:12:36] INFO [MainThread:142] T1 / EPISODE 57 / STEP 49.325k / MEAN REWARD 161.4 / 228 STEPS/s
+[2018-05-15 14:12:41] INFO [MainThread:142] T0 / EPISODE 57 / STEP 50.053k / MEAN REWARD 131.6 / 226 STEPS/s
+[2018-05-15 14:12:42] INFO [MainThread:142] T1 / EPISODE 58 / STEP 50.162k / MEAN REWARD 160.3 / 225 STEPS/s
+[2018-05-15 14:12:46] INFO [MainThread:142] T0 / EPISODE 58 / STEP 50.737k / MEAN REWARD 129.7 / 224 STEPS/s
+[2018-05-15 14:12:47] INFO [MainThread:142] T1 / EPISODE 59 / STEP 50.951k / MEAN REWARD 161.4 / 223 STEPS/s
+[2018-05-15 14:12:51] INFO [MainThread:142] T0 / EPISODE 59 / STEP 51.531k / MEAN REWARD 128.0 / 222 STEPS/s
+[2018-05-15 14:12:54] INFO [MainThread:142] T1 / EPISODE 60 / STEP 51.891k / MEAN REWARD 160.8 / 221 STEPS/s
+[2018-05-15 14:12:57] INFO [MainThread:142] T0 / EPISODE 60 / STEP 52.263k / MEAN REWARD 127.5 / 220 STEPS/s
+[2018-05-15 14:13:00] INFO [MainThread:142] T1 / EPISODE 61 / STEP 52.674k / MEAN REWARD 160.7 / 219 STEPS/s
+[2018-05-15 14:13:06] INFO [MainThread:142] T1 / EPISODE 62 / STEP 53.571k / MEAN REWARD 161.7 / 217 STEPS/s
+[2018-05-15 14:13:06] INFO [MainThread:142] T0 / EPISODE 61 / STEP 53.678k / MEAN REWARD 130.3 / 217 STEPS/s
+[2018-05-15 14:13:12] INFO [MainThread:142] T1 / EPISODE 63 / STEP 54.42k / MEAN REWARD 161.1 / 216 STEPS/s
+[2018-05-15 14:13:13] INFO [MainThread:142] T0 / EPISODE 62 / STEP 54.56k / MEAN REWARD 130.2 / 215 STEPS/s
+[2018-05-15 14:13:17] INFO [MainThread:142] T1 / EPISODE 64 / STEP 55.162k / MEAN REWARD 160.5 / 214 STEPS/s
+[2018-05-15 14:13:18] INFO [MainThread:142] T0 / EPISODE 63 / STEP 55.386k / MEAN REWARD 129.0 / 214 STEPS/s
+[2018-05-15 14:13:22] INFO [MainThread:142] T1 / EPISODE 65 / STEP 55.976k / MEAN REWARD 158.8 / 213 STEPS/s
+[2018-05-15 14:13:23] INFO [MainThread:142] T0 / EPISODE 64 / STEP 56.188k / MEAN REWARD 127.7 / 213 STEPS/s
+[2018-05-15 14:13:27] INFO [MainThread:142] T1 / EPISODE 66 / STEP 56.755k / MEAN REWARD 157.2 / 212 STEPS/s
+[2018-05-15 14:13:31] INFO [MainThread:142] T0 / EPISODE 65 / STEP 57.327k / MEAN REWARD 128.1 / 211 STEPS/s
+[2018-05-15 14:13:33] INFO [MainThread:142] T1 / EPISODE 67 / STEP 57.633k / MEAN REWARD 161.2 / 210 STEPS/s
+[2018-05-15 14:13:39] INFO [MainThread:142] T0 / EPISODE 66 / STEP 58.403k / MEAN REWARD 128.8 / 209 STEPS/s
+[2018-05-15 14:13:39] INFO [MainThread:142] T1 / EPISODE 68 / STEP 58.47k / MEAN REWARD 161.0 / 209 STEPS/s
+[2018-05-15 14:13:44] INFO [MainThread:142] T0 / EPISODE 67 / STEP 59.219k / MEAN REWARD 128.4 / 208 STEPS/s
+[2018-05-15 14:13:45] INFO [MainThread:142] T1 / EPISODE 69 / STEP 59.239k / MEAN REWARD 159.4 / 208 STEPS/s
+[2018-05-15 14:13:50] INFO [MainThread:142] T0 / EPISODE 68 / STEP 60.081k / MEAN REWARD 129.0 / 206 STEPS/s
+[2018-05-15 14:13:51] INFO [MainThread:142] T1 / EPISODE 70 / STEP 60.199k / MEAN REWARD 160.7 / 206 STEPS/s
+[2018-05-15 14:13:56] INFO [MainThread:142] T0 / EPISODE 69 / STEP 60.924k / MEAN REWARD 128.3 / 205 STEPS/s
+[2018-05-15 14:13:58] INFO [MainThread:142] T1 / EPISODE 71 / STEP 61.106k / MEAN REWARD 159.5 / 205 STEPS/s
+[2018-05-15 14:14:02] INFO [MainThread:142] T0 / EPISODE 70 / STEP 61.768k / MEAN REWARD 128.9 / 204 STEPS/s
+[2018-05-15 14:14:05] INFO [MainThread:142] T1 / EPISODE 72 / STEP 62.126k / MEAN REWARD 160.4 / 203 STEPS/s
+[2018-05-15 14:14:08] INFO [MainThread:142] T0 / EPISODE 71 / STEP 62.546k / MEAN REWARD 127.5 / 202 STEPS/s
+[2018-05-15 14:14:10] INFO [MainThread:142] T1 / EPISODE 73 / STEP 62.787k / MEAN REWARD 158.9 / 202 STEPS/s
+[2018-05-15 14:14:15] INFO [MainThread:142] T0 / EPISODE 72 / STEP 63.41k / MEAN REWARD 126.4 / 201 STEPS/s
+[2018-05-15 14:14:16] INFO [MainThread:142] T1 / EPISODE 74 / STEP 63.579k / MEAN REWARD 158.4 / 201 STEPS/s
+[2018-05-15 14:14:20] INFO [MainThread:142] T0 / EPISODE 73 / STEP 64.117k / MEAN REWARD 125.0 / 200 STEPS/s
+[2018-05-15 14:14:23] INFO [MainThread:142] T1 / EPISODE 75 / STEP 64.491k / MEAN REWARD 158.0 / 199 STEPS/s
+[2018-05-15 14:14:25] INFO [MainThread:142] T0 / EPISODE 74 / STEP 64.845k / MEAN REWARD 125.0 / 199 STEPS/s
+[2018-05-15 14:14:28] INFO [MainThread:142] T1 / EPISODE 76 / STEP 65.333k / MEAN REWARD 159.5 / 198 STEPS/s
+[2018-05-15 14:14:31] INFO [MainThread:142] T0 / EPISODE 75 / STEP 65.651k / MEAN REWARD 123.7 / 198 STEPS/s
+[2018-05-15 14:14:35] INFO [MainThread:142] T1 / EPISODE 77 / STEP 66.296k / MEAN REWARD 159.1 / 197 STEPS/s
+[2018-05-15 14:14:36] INFO [MainThread:142] T0 / EPISODE 76 / STEP 66.449k / MEAN REWARD 122.0 / 197 STEPS/s
+[2018-05-15 14:14:42] INFO [MainThread:142] T0 / EPISODE 77 / STEP 67.329k / MEAN REWARD 121.8 / 196 STEPS/s
+[2018-05-15 14:14:42] INFO [MainThread:142] T1 / EPISODE 78 / STEP 67.378k / MEAN REWARD 159.6 / 196 STEPS/s

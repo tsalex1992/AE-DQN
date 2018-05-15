@@ -19,32 +19,32 @@ logger = utils.logger.getLogger('value_based_actor_learner')
 class ValueBasedLearner(ActorLearner):
 
     def __init__(self, args, network_type=QNetwork):
-        
+
         super(ValueBasedLearner, self).__init__(args)
-        
+
         # Shared mem vars
         self.target_vars = args.target_vars
         self.target_update_flags = args.target_update_flags
         self.q_target_update_steps = args.q_target_update_steps
 
         self.scores = list()
-        
+
         conf_learning = {'name': "local_learning_{}".format(self.actor_id),
                          'input_shape': self.input_shape,
                          'num_act': self.num_actions,
                          'args': args}
         conf_target = conf_learning.copy()
         conf_target['name'] = 'local_target_{}'.format(self.actor_id)
-        
+
         self.local_network = network_type(conf_learning)
         self.target_network = network_type(conf_target)
 
         if self.is_master():
-            var_list = self.local_network.params + self.target_network.params            
-            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3, 
+            var_list = self.local_network.params + self.target_network.params
+            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3,
                                         keep_checkpoint_every_n_hours=2)
 
-        # Exploration epsilons 
+        # Exploration epsilons
         self.initial_epsilon = 1.0
         self.final_epsilon = self.generate_final_epsilon()
         self.epsilon = self.initial_epsilon if self.is_train else args.final_epsilon
@@ -62,7 +62,7 @@ class ValueBasedLearner(ActorLearner):
         """ Linear annealing """
         if self.epsilon > self.final_epsilon:
             self.epsilon -= (self.initial_epsilon - self.final_epsilon) / self.epsilon_annealing_steps
-        
+
 
     def _get_summary_vars(self):
         episode_reward = tf.Variable(0., name='episode_reward')
@@ -70,10 +70,10 @@ class ValueBasedLearner(ActorLearner):
 
         episode_avg_max_q = tf.Variable(0., name='episode_avg_max_q')
         s2 = tf.summary.scalar('Max_Q_Value_{}'.format(self.actor_id), episode_avg_max_q)
-        
+
         logged_epsilon = tf.Variable(0., name='epsilon_'.format(self.actor_id))
         s3 = tf.summary.scalar('Epsilon_{}'.format(self.actor_id), logged_epsilon)
-        
+
         return [episode_reward, episode_avg_max_q, logged_epsilon]
 
 
@@ -87,26 +87,26 @@ class ValueBasedLearner(ActorLearner):
     def boltzmann_exploration(self, q_values):
         exp_minus_max = np.exp(q_values - q_values.max())
         probs = exp_minus_max / exp_minus_max.sum()
-        
+
         return np.random.choice(self.num_actions, p=probs)
 
 
     def choose_next_action(self, state):
         """ Epsilon greedy """
         new_action = np.zeros([self.num_actions])
-        
+
         q_values = self.session.run(
             self.local_network.output_layer,
             feed_dict={self.local_network.input_ph: [state]})[0]
-            
+
         if self.exploration_strategy == 'epsilon-greedy':
             action_index = self.epsilon_greedy(q_values)
         else:
             action_index = self.boltzmann_exploration(q_values)
-                
+
         new_action[action_index] = 1
         self.reduce_thread_epsilon()
-        
+
         return new_action, q_values
 
 
@@ -138,7 +138,7 @@ class ValueBasedLearner(ActorLearner):
     def update_target(self):
         copy(np.frombuffer(self.target_vars.vars, ctypes.c_float),
               np.frombuffer(self.learning_vars.vars, ctypes.c_float))
-        
+
         # Set shared flags
         for i in range(len(self.target_update_flags.updated)):
             self.target_update_flags.updated[i] = 1
@@ -167,11 +167,12 @@ class ValueBasedLearner(ActorLearner):
                 2*np.array(self.scores).std(),
                 max(self.scores),
             ))
+            self.vis.plot_current_errors(T,total_episode_reward)
             self.log_summary(
                 total_episode_reward,
                 episode_ave_max_q,
                 self.epsilon)
-                
+
             state = self.emulator.get_initial_state()
             total_episode_reward = 0
             episode_ave_max_q = 0
@@ -179,16 +180,16 @@ class ValueBasedLearner(ActorLearner):
             ep_t = 0
 
         return state, total_episode_reward, steps_at_last_reward, ep_t, episode_ave_max_q, episode_over
-        
-        
+
+
 class NStepQLearner(ValueBasedLearner):
 
     def train(self):
         """ Main actor learner loop for n-step Q learning. """
-        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id,
             self.global_step.value(), time.ctime()))
 
-        s = self.emulator.get_initial_state()        
+        s = self.emulator.get_initial_state()
         steps_at_last_reward = self.local_step
         exec_update_target = False
         total_episode_reward = 0
@@ -199,7 +200,7 @@ class NStepQLearner(ValueBasedLearner):
         prev_qmax = -10*6
         low_qmax = 0
         ep_t = 0
-        
+
         while (self.global_step.value() < self.max_global_steps):
 
             # Sync local learning net with shared mem
@@ -210,14 +211,14 @@ class NStepQLearner(ValueBasedLearner):
             states =  list()
             actions = list()
             local_step_start = self.local_step
-            
-            while not (episode_over 
+
+            while not (episode_over
                 or (self.local_step - local_step_start == self.max_local_steps)):
-                
+
                 # Choose next action and execute it
                 a, readout_t = self.choose_next_action(s)
 
-                
+
                 new_s, reward, episode_over = self.emulator.next(a)
                 if reward != 0.0:
                     steps_at_last_reward = self.local_step
@@ -227,29 +228,29 @@ class NStepQLearner(ValueBasedLearner):
                 reward = self.rescale_reward(reward)
 
                 ep_t += 1
-                
+
                 rewards.append(reward)
                 states.append(s)
                 actions.append(a)
-                
+
                 s = new_s
                 self.local_step += 1
                 episode_ave_max_q += np.max(readout_t)
-                
+
                 global_step, update_target = self.global_step.increment(
                     self.q_target_update_steps)
 
                 if update_target:
                     update_target = False
                     exec_update_target = True
-                
+
                 self.local_network.global_step = global_step
 
             R = self.bootstrap_value(s, episode_over)
             targets = self.compute_targets(rewards, R)
-            # Compute gradients on the local Q network 
+            # Compute gradients on the local Q network
             self.apply_update(states, actions, targets)
-            
+
             if exec_update_target:
                 self.update_target()
                 exec_update_target = False
@@ -275,15 +276,15 @@ class OneStepSARSALearner(ValueBasedLearner):
 
     def train(self):
         """ Main actor learner loop for 1-step SARSA learning. """
-        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id,
             self.global_step.value(), time.ctime()))
-        
+
         s = self.emulator.get_initial_state()
 
         states =  list()
         actions = list()
         targets = list()
-        
+
         steps_at_last_reward = self.local_step
         exec_update_target = False
         total_episode_reward = 0
@@ -297,12 +298,12 @@ class OneStepSARSALearner(ValueBasedLearner):
 
         # Choose initial action
         a, readout_t = self.choose_next_action(s)
-        
+
         while (self.global_step.value() < self.max_global_steps):
             s_prime, reward, episode_over = self.emulator.next(a)
             if reward != 0.0:
                 steps_at_last_reward = self.local_step
-            
+
             ep_t += 1
             episode_ave_max_q += np.max(readout_t)
 
@@ -315,12 +316,12 @@ class OneStepSARSALearner(ValueBasedLearner):
             if episode_over:
                 y = reward
             else:
-                # Choose action that we will execute in the next step 
+                # Choose action that we will execute in the next step
                 a_prime, readout_t = self.choose_next_action(s_prime)
                 q_prime = readout_t[a_prime.argmax()]
-                # Q_target in the new state for the next step action 
+                # Q_target in the new state for the next step action
                 q_prime = self.session.run(
-                    self.target_network.output_layer, 
+                    self.target_network.output_layer,
                     feed_dict={self.target_network.input_ph: [s_prime]}
                 )[0][a_prime.argmax()]
 
@@ -328,16 +329,16 @@ class OneStepSARSALearner(ValueBasedLearner):
                 a = a_prime
 
             targets.append(y)
-            
+
             self.local_step += 1
             global_step, update_target = self.global_step.increment(
                 self.q_target_update_steps)
-            
+
             # Compute grads and asynchronously apply them to shared memory
-            if ((self.local_step % self.grads_update_steps == 0) 
+            if ((self.local_step % self.grads_update_steps == 0)
                 or episode_over):
 
-                # Compute gradients on the local Q network     
+                # Compute gradients on the local Q network
                 self.apply_update(states, actions, targets)
                 self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
                 self.save_vars()
@@ -346,7 +347,7 @@ class OneStepSARSALearner(ValueBasedLearner):
                 actions = list()
                 targets = list()
 
-            # Copy shared learning network params to shared target network params 
+            # Copy shared learning network params to shared target network params
             if update_target:
                 self.update_target()
 
@@ -357,4 +358,3 @@ class OneStepSARSALearner(ValueBasedLearner):
 
             s, total_episode_reward, steps_at_last_reward, ep_t, episode_ave_max_q, episode_over = \
                 self.prepare_state(s, total_episode_reward, steps_at_last_reward, ep_t, episode_ave_max_q, episode_over)
-

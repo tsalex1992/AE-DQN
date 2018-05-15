@@ -38,7 +38,7 @@ class PerPixelDensityModel(object):
     def update(self, obs):
         obs = resize(obs, (self.height, self.width), preserve_range=True)
         obs = np.floor((obs*self.num_bins)).astype(np.int32)
-        
+
         log_prob, log_recoding_prob = self._update(obs)
         return self.exploration_bonus(log_prob, log_recoding_prob)
 
@@ -54,7 +54,7 @@ class PerPixelDensityModel(object):
                 pixel_mass = self.counts[i, j].sum()
                 log_prob += np.log(bin_count / pixel_mass)
                 log_recoding_prob += np.log((bin_count + 1) / (pixel_mass + 1))
-        
+
         return log_prob, log_recoding_prob
 
     def exploration_bonus(self, log_prob, log_recoding_prob):
@@ -114,9 +114,9 @@ class A3CDensityModelMixin(DensityModelMixin):
     """
     def _train(self):
         """ Main actor learner loop for advantage actor critic learning. """
-        logger.debug("Actor {} resuming at Step {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}".format(self.actor_id,
             self.global_step.value()))
-        
+
         bonuses = deque(maxlen=100)
         while (self.global_step.value() < self.max_global_steps):
             # Sync local learning net with shared mem
@@ -126,7 +126,7 @@ class A3CDensityModelMixin(DensityModelMixin):
             episode_over = False
             total_episode_reward = 0.0
             episode_start_step = self.local_step
-            
+
             while not episode_over:
                 self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
                 self.save_vars()
@@ -140,10 +140,10 @@ class A3CDensityModelMixin(DensityModelMixin):
 
                 while self.local_step - local_step_start < self.max_local_steps and not episode_over:
                     # Choose next action and execute it
-                    a, readout_v_t, readout_pi_t = self.choose_next_action(s)                    
+                    a, readout_v_t, readout_pi_t = self.choose_next_action(s)
                     new_s, reward, episode_over = self.emulator.next(a)
                     total_episode_reward += reward
-                    
+
                     # Update density model
                     current_frame = new_s[...,-1]
                     bonus = self.density_model.update(current_frame)
@@ -169,12 +169,12 @@ class A3CDensityModelMixin(DensityModelMixin):
                         self.write_density_model()
                     if self.density_model_update_flags.updated[self.actor_id] == 1:
                         self.read_density_model()
-                        self.density_model_update_flags.updated[self.actor_id] = 0  
-                
+                        self.density_model_update_flags.updated[self.actor_id] = 0
+
                 next_val = self.bootstrap_value(new_s, episode_over)
                 advantages = self.compute_gae(rewards, values, next_val)
                 targets = self.compute_targets(rewards, next_val)
-                # Compute gradients on the local policy/V network and apply them to shared memory 
+                # Compute gradients on the local policy/V network and apply them to shared memory
                 entropy = self.apply_update(states, actions, targets, advantages)
 
             elapsed_time = time.time() - self.start_time
@@ -254,7 +254,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
         s3 = tf.summary.scalar('Novelty_Bonus_q95_{}'.format(self.actor_id), bonus_q95)
 
         augmented_reward = tf.Variable(0., name='augmented_episode_reward')
-        s4 = tf.summary.scalar('Augmented_Episode_Reward_{}'.format(self.actor_id), augmented_reward)       
+        s4 = tf.summary.scalar('Augmented_Episode_Reward_{}'.format(self.actor_id), augmented_reward)
 
         return q_vars + [bonus_q05, bonus_q50, bonus_q95, augmented_reward]
 
@@ -283,6 +283,11 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
                 2*np.array(self.scores).std(),
                 max(self.scores),
             ))
+            self.vis.plot_current_errors(T,total_episode_reward)
+            self.wr.writerow(T)
+            self.wr.writerow(total_episode_reward)
+            #print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
+
 
             self.log_summary(
                 total_episode_reward,
@@ -374,17 +379,17 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
     def train(self):
         """ Main actor learner loop for n-step Q learning. """
-        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id,
             self.global_step.value(), time.ctime()))
 
         s = self.emulator.get_initial_state()
-        
+
         s_batch = list()
         a_batch = list()
         y_batch = list()
         bonuses = deque(maxlen=1000)
         episode_over = False
-        
+
         t0 = time.time()
         global_steps_at_last_record = self.global_step.value()
         while (self.global_step.value() < self.max_global_steps):
@@ -421,16 +426,16 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
                 reward = self.rescale_reward(self.rescale_reward(reward) + bonus)
                 total_augmented_reward += reward
                 ep_t += 1
-                
+
                 rewards.append(reward)
                 states.append(s)
                 actions.append(a)
                 max_q_values.append(max_q)
-                
+
                 s = new_s
                 self.local_step += 1
                 episode_ave_max_q += max_q
-                
+
                 global_step, _ = self.global_step.increment()
 
                 if global_step % self.q_target_update_steps == 0:
@@ -481,4 +486,3 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
                 self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
-

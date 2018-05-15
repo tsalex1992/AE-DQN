@@ -8,6 +8,7 @@ from utils import checkpoint_utils
 from utils.decorators import only_on_train
 from .actor_learner import ActorLearner, ONE_LIFE_GAMES
 from networks.policy_v_network import PolicyValueNetwork
+import csv
 
 
 logger = utils.logger.getLogger('policy_based_actor_learner')
@@ -26,7 +27,7 @@ class BaseA3CLearner(ActorLearner):
 
     def sample_policy_action(self, probs, temperature=0.5):
         probs = probs - np.finfo(np.float32).epsneg
-    
+
         histogram = np.random.multinomial(1, probs)
         action_index = int(np.nonzero(histogram)[0])
         return action_index
@@ -50,7 +51,7 @@ class BaseA3CLearner(ActorLearner):
         td_i = 0.0
 
         for i in reversed(range(size)):
-            td_i = rewards[i] + self.gamma*values[i+1] - values[i] + self.td_lambda*self.gamma*td_i 
+            td_i = rewards[i] + self.gamma*values[i+1] - values[i] + self.td_lambda*self.gamma*td_i
             adv_batch.append(td_i)
 
         adv_batch.reverse()
@@ -78,9 +79,9 @@ class BaseA3CLearner(ActorLearner):
 
     def train(self):
         """ Main actor learner loop for advantage actor critic learning. """
-        logger.debug("Actor {} resuming at Step {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}".format(self.actor_id,
             self.global_step.value()))
-        
+
         episode_rewards = deque(maxlen=1000)
         while (self.global_step.value() < self.max_global_steps):
             # Sync local learning net with shared mem
@@ -90,7 +91,7 @@ class BaseA3CLearner(ActorLearner):
             episode_over = False
             total_episode_reward = 0.0
             episode_start_step = self.local_step
-            
+
             while not episode_over:
                 self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
                 self.save_vars()
@@ -107,12 +108,12 @@ class BaseA3CLearner(ActorLearner):
                     a, readout_v_t, readout_pi_t = self.choose_next_action(s)
                     if self.is_master() and (self.local_step % 400 == 0):
                         logger.debug("π_a={:.4f} / V={:.4f}".format(readout_pi_t[a.argmax()], readout_v_t))
-                    
+
                     new_s, reward, episode_over = self.emulator.next(a)
                     total_episode_reward += reward
                     # Rescale or clip immediate reward
                     reward = self.rescale_reward(reward)
-                
+
                     rewards.append(reward)
                     states.append(s)
                     actions.append(a)
@@ -121,11 +122,11 @@ class BaseA3CLearner(ActorLearner):
                     s = new_s
                     self.local_step += 1
                     self.global_step.increment()
-                
+
                 next_val = self.bootstrap_value(new_s, episode_over)
                 advantages = self.compute_gae(rewards, values, next_val)
                 targets = self.compute_targets(rewards, next_val)
-                # Compute gradients on the local policy/V network and apply them to shared memory 
+                # Compute gradients on the local policy/V network and apply them to shared memory
                 entropy = self.apply_update(states, actions, targets, advantages)
 
 
@@ -139,7 +140,12 @@ class BaseA3CLearner(ActorLearner):
                 self.global_step.value()/1000,
                 np.array(episode_rewards).mean(),
                 perf))
-
+            self.vis.plot_current_errors(self.local_episode,np.array(episode_rewards).mean())
+        #    print("the type is :")
+        #    print(type(self.wr))#.write(self.local_episode)
+        #    self.wr.write("Temp")
+            #self.wr.writerow(t.vis.plot_data['Y'])
+        #    print ("We are here")
             self.log_summary(total_episode_reward, np.array(values).mean(), entropy)
 
 
@@ -230,6 +236,3 @@ class A3CLSTMLearner(BaseA3CLearner):
 
         self.apply_gradients_to_shared_memory_vars(grads)
         return entropy
-
-
-

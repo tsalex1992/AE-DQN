@@ -17,7 +17,7 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
     def __init__(self, args):
 
         super(ActionSequenceA3CLearner, self).__init__(args)
-        
+
         # Shared mem vars
         self.learning_vars = args.learning_vars
 
@@ -25,13 +25,13 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                          'input_shape': args.input_shape,
                          'num_act': self.num_actions,
                          'args': args}
-        
+
         self.local_network = SequencePolicyVNetwork(conf_learning)
         self.reset_hidden_state()
-            
+
         if self.is_master():
             var_list = self.local_network.params
-            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3, 
+            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3,
                                         keep_checkpoint_every_n_hours=2)
 
 
@@ -64,7 +64,7 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
 
     def train(self):
         """ Main actor learner loop for advantage actor critic learning. """
-        logger.debug("Actor {} resuming at Step {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}".format(self.actor_id,
             self.global_step.value()))
 
         s = self.emulator.get_initial_state()
@@ -75,34 +75,34 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
         y_batch = []
         adv_batch = []
         seq_len_batch = []
-        
+
         reset_game = False
         episode_over = False
         start_time = time.time()
         steps_at_last_reward = self.local_step
-        
+
         while (self.global_step.value() < self.max_global_steps):
             # Sync local learning net with shared mem
             self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
             self.save_vars()
 
-            local_step_start = self.local_step 
-            
+            local_step_start = self.local_step
+
             rewards = []
             states = []
             actions = []
             values = []
             seq_lengths = []
-            
-            while not (episode_over 
-                or (self.local_step - local_step_start 
+
+            while not (episode_over
+                or (self.local_step - local_step_start
                     == self.max_local_steps)):
-                
+
                 # Choose next action and execute it
                 action_sequence, readout_v_t = self.sample_action_sequence(s)
                 # if self.is_master() and (self.local_step % 100 == 0):
                 #     logger.debug("pi={}, V={}".format(readout_pi_t, readout_v_t))
-                
+
                 acc_reward = 0.0
                 length = 0
 
@@ -123,13 +123,13 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 total_episode_reward += reward
                 # Rescale or clip immediate reward
                 reward = self.rescale_reward(reward)
-                
+
                 rewards.append(reward)
                 seq_lengths.append(length)
                 states.append(s)
                 actions.append(action_sequence)
                 values.append(readout_v_t)
-                
+
 
                 s = new_s
                 self.local_step += 1
@@ -138,8 +138,8 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 if self.local_step % 1000 == 0:
                     pass
                     # Pdb().set_trace()
-                
-            
+
+
             # Calculate the value offered by critic in the new state.
             if episode_over:
                 R = 0
@@ -147,8 +147,8 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 R = self.session.run(
                     self.local_network.output_layer_v,
                     feed_dict={self.local_network.input_ph:[new_s]})[0][0]
-                            
-             
+
+
             sel_actions = []
             for i in reversed(range(len(states))):
                 R = rewards[i] + self.gamma * R
@@ -158,9 +158,9 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 s_batch.append(states[i])
                 adv_batch.append(R - values[i])
                 seq_len_batch.append(seq_lengths[i])
-                
+
                 sel_actions.append(np.argmax(actions[i]))
-            
+
             padded_output_sequences = np.array([
                 np.vstack([seq[:length, :], np.zeros((max(seq_len_batch)-length, self.num_actions+1))])
                 for length, seq in zip(seq_len_batch, a_batch)
@@ -177,7 +177,7 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
             allowed_actions[:, 0, -1] = 0 #empty sequence is not a valid action
 
             feed_dict={
-                self.local_network.input_ph:              s_batch, 
+                self.local_network.input_ph:              s_batch,
                 self.local_network.critic_target_ph:      y_batch,
                 self.local_network.adv_actor_ph:          adv_batch,
                 self.local_network.decoder_initial_state: np.zeros((len(s_batch), self.local_network.decoder_hidden_state_size*2)),
@@ -198,15 +198,15 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 feed_dict=feed_dict)
 
             print('Entropy:', entropy) #, 'Adv:', advantage #, 'Value:', value
-            self.apply_gradients_to_shared_memory_vars(grads)     
-            
+            self.apply_gradients_to_shared_memory_vars(grads)
+
             s_batch = []
             a_batch = []
-            y_batch = []          
+            y_batch = []
             adv_batch = []
             seq_len_batch = []
 
-            
+
             # prevent the agent from getting stuck
             if (self.local_step - steps_at_last_reward > 5000
                 or (self.emulator.get_lives() == 0
@@ -224,7 +224,7 @@ class ActionSequenceA3CLearner(BaseA3CLearner):
                 steps_per_sec = global_t / elapsed_time
                 perf = "{:.0f}".format(steps_per_sec)
                 logger.info("T{} / STEP {} / REWARD {} / {} STEPS/s, Actions {}".format(self.actor_id, global_t, total_episode_reward, perf, sel_actions))
-                
+                self.vis.plot_current_errors(global_t,total_episode_reward)
                 self.log_summary(total_episode_reward, entropy)
 
                 episode_over = False
@@ -279,7 +279,7 @@ class ARA3CLearner(BaseA3CLearner):
 
     def train(self):
         """ Main actor learner loop for advantage actor critic learning. """
-        logger.debug("Actor {} resuming at Step {}".format(self.actor_id, 
+        logger.debug("Actor {} resuming at Step {}".format(self.actor_id,
             self.global_step.value()))
 
         s = self.emulator.get_initial_state()
@@ -287,14 +287,14 @@ class ARA3CLearner(BaseA3CLearner):
         total_episode_reward = 0.0
         mean_entropy = 0.0
         episode_start_step = 0
-        
+
         while (self.global_step.value() < self.max_global_steps):
             # Sync local learning net with shared mem
             self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
             self.save_vars()
 
-            local_step_start = self.local_step 
-            
+            local_step_start = self.local_step
+
             reset_game = False
             episode_over = False
 
@@ -308,14 +308,14 @@ class ARA3CLearner(BaseA3CLearner):
             ar_batch       = list()
             adv_batch      = list()
             action_repeats = list()
-            
-            while not (episode_over 
-                or (self.local_step - local_step_start 
+
+            while not (episode_over
+                or (self.local_step - local_step_start
                     == self.max_local_steps)):
-                
+
                 # Choose next action and execute it
                 a, readout_v_t, readout_pi_t, action_repeat = self.choose_next_action(s)
-                
+
                 if self.is_master() and (self.local_step % 100 == 0):
                     logger.debug("π_a={:.4f} / V={:.4f} repeat={}".format(
                         readout_pi_t[a.argmax()], readout_v_t, action_repeat))
@@ -332,18 +332,18 @@ class ARA3CLearner(BaseA3CLearner):
                 total_episode_reward += reward
                 # Rescale or clip immediate reward
                 reward = self.rescale_reward(reward)
-                
+
                 rewards.append(reward)
                 states.append(s)
                 actions.append(a)
                 values.append(readout_v_t)
                 action_repeats.append(action_repeat)
-                
+
                 s = new_s
                 self.local_step += 1
                 self.global_step.increment()
-                
-            
+
+
             # Calculate the value offered by critic in the new state.
             if episode_over:
                 R = 0
@@ -351,8 +351,8 @@ class ARA3CLearner(BaseA3CLearner):
                 R = self.session.run(
                     self.local_network.output_layer_v,
                     feed_dict={self.local_network.input_ph:[new_s]})[0][0]
-                            
-             
+
+
             sel_actions = []
             for i in reversed(range(len(states))):
                 R = rewards[i] + self.gamma * R
@@ -362,13 +362,13 @@ class ARA3CLearner(BaseA3CLearner):
                 s_batch.append(states[i])
                 adv_batch.append(R - values[i])
                 ar_batch.append(action_repeats[i])
-                
-                sel_actions.append(np.argmax(actions[i]))
-                
 
-            # Compute gradients on the local policy/V network and apply them to shared memory  
+                sel_actions.append(np.argmax(actions[i]))
+
+
+            # Compute gradients on the local policy/V network and apply them to shared memory
             feed_dict={
-                self.local_network.input_ph: s_batch, 
+                self.local_network.input_ph: s_batch,
                 self.local_network.critic_target_ph: y_batch,
                 self.local_network.selected_action_ph: a_batch,
                 self.local_network.adv_actor_ph: adv_batch,
@@ -378,7 +378,7 @@ class ARA3CLearner(BaseA3CLearner):
                 [self.local_network.get_gradients, self.local_network.entropy],
                 feed_dict=feed_dict)
 
-            self.apply_gradients_to_shared_memory_vars(grads)     
+            self.apply_gradients_to_shared_memory_vars(grads)
 
             delta_old = local_step_start - episode_start_step
             delta_new = self.local_step -  local_step_start
@@ -386,5 +386,3 @@ class ARA3CLearner(BaseA3CLearner):
 
             s, mean_entropy, episode_start_step, total_episode_reward, steps_at_last_reward = self.prepare_state(
                 s, mean_entropy, episode_start_step, total_episode_reward, steps_at_last_reward, sel_actions, episode_over)
-
-

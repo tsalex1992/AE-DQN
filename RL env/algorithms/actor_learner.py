@@ -7,10 +7,11 @@ import utils.logger
 import multiprocessing
 import tensorflow as tf
 import numpy as np
-
+import csv
 from utils import checkpoint_utils
 from utils.decorators import only_on_train
 from utils.hogupdatemv import apply_grads_mom_rmsprop, apply_grads_adam, apply_grads_adamax
+from utils.Visualizer import Visualizer
 from contextlib import contextmanager
 from multiprocessing import Process
 
@@ -57,24 +58,28 @@ ONE_LIFE_GAMES = [
     'Humanoid-v1',
     'HumanoidStandup-v1',
 ]
- 
+
 logger = utils.logger.getLogger('actor_learner')
 
 
 class ActorLearner(Process):
-    
+
     def __init__(self, args):
         super(ActorLearner, self).__init__()
-       
+
         self.summ_base_dir = args.summ_base_dir
-        
+
         self.local_step = 0
         self.global_step = args.global_step
         self.local_episode = 0
         self.last_saving_step = 0
+        self.filename = str(args.game)+"_"+str(args.alg_type)+"_"+str(args.actor_id)
 
         self.saver = None
         self.actor_id = args.actor_id
+        self.visdom = args.visdom
+        # launch python -m visdom.server
+        self.vis =  Visualizer(self.actor_id,self.visdom) ## default port is 8098 http://localhost:8097. actor_id
         self.alg_type = args.alg_type
         self.use_monitor = args.use_monitor
         self.max_local_steps = args.max_local_steps
@@ -90,10 +95,10 @@ class ActorLearner(Process):
         self.q_update_interval = args.q_update_interval
         self.restore_checkpoint = args.restore_checkpoint
         self.random_seed = args.random_seed
-        
+
         # Shared mem vars
         self.learning_vars = args.learning_vars
-            
+
         if self.optimizer_mode == 'local':
             if self.optimizer_type == 'rmsprop':
                 self.opt_st = np.ones(self.learning_vars.size, dtype=ctypes.c_float)
@@ -108,7 +113,7 @@ class ActorLearner(Process):
         self.b1 = args.b1
         self.b2 = args.b2
         self.e = args.e
-        
+
         if args.env == 'GYM':
             from environments.atari_environment import AtariEnvironment
             self.emulator = AtariEnvironment(
@@ -124,15 +129,15 @@ class ActorLearner(Process):
         elif args.env == 'ALE':
             from environments.emulator import Emulator
             self.emulator = Emulator(
-                args.rom_path, 
-                args.game, 
-                args.visualize, 
+                args.rom_path,
+                args.game,
+                args.visualize,
                 self.actor_id,
                 self.random_seed,
                 args.single_life_episodes)
         else:
             raise Exception('Invalid environment `{}`'.format(args.env))
-            
+
         self.grads_update_steps = args.grads_update_steps
         self.max_global_steps = args.max_global_steps
         self.gamma = args.gamma
@@ -149,6 +154,12 @@ class ActorLearner(Process):
         # Initizlize Tensorboard summaries
         self.summary_ph, self.update_ops, self.summary_ops = self.setup_summaries()
         self.summary_op = tf.summary.merge_all()
+        # open log file each agent
+        with open(str(self.filename), 'w') as file_name:
+            
+            self.wr = csv.writer(file_name, quoting=csv.QUOTE_ALL)
+            print("in actor learner file, self.wr type is {}".format(type(self.wr)))
+        #print ("Created actor learner")
 
 
     def compute_targets(self, rewards, R):
@@ -200,6 +211,7 @@ class ActorLearner(Process):
                     2*np.array(rewards).std(),
                     max(rewards),
                 ))
+                #self.vis.plot_current_errors(episode,np.array(rewards).mean())
 
 
     def synchronize_workers(self):
@@ -207,7 +219,7 @@ class ActorLearner(Process):
             # Initialize network parameters
             g_step = checkpoint_utils.restore_vars(self.saver, self.session, self.game, self.alg_type, self.max_local_steps, self.restore_checkpoint)
             self.global_step.val.value = g_step
-            self.last_saving_step = g_step   
+            self.last_saving_step = g_step
             logger.debug("T{}: Initializing shared memory...".format(self.actor_id))
             self.update_shared_memory()
 
@@ -216,7 +228,7 @@ class ActorLearner(Process):
 
         if not self.is_master():
             logger.debug("T{}: Syncing with shared memory...".format(self.actor_id))
-            self.sync_net_with_shared_memory(self.local_network, self.learning_vars)  
+            self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
             if hasattr(self, 'target_network'):
                 self.sync_net_with_shared_memory(self.target_network, self.learning_vars)
             elif hasattr(self, 'batch_network'):
@@ -271,8 +283,8 @@ class ActorLearner(Process):
     def save_vars(self, force = False):
         if (self.is_master() and self.global_step.value()-self.last_saving_step >= CHECKPOINT_INTERVAL) or force:
             self.last_saving_step = self.global_step.value()
-            checkpoint_utils.save_vars(self.saver, self.session, self.game, self.alg_type, self.max_local_steps, self.last_saving_step) 
-    
+            checkpoint_utils.save_vars(self.saver, self.session, self.game, self.alg_type, self.max_local_steps, self.last_saving_step)
+
     def update_shared_memory(self):
         # Initialize shared memory with tensorflow var values
         params = self.session.run(self.local_network.params)
@@ -283,11 +295,11 @@ class ActorLearner(Process):
         # if hasattr(self, 'target_vars'):
             # target_params = self.session.run(self.target_network.params)
             # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
-                
-    
+
+
     @only_on_train(return_val=0.0)
     def decay_lr(self):
-        if self.global_step.value() <= self.lr_annealing_steps:            
+        if self.global_step.value() <= self.lr_annealing_steps:
             return self.initial_lr - (self.global_step.value() * self.initial_lr / self.lr_annealing_steps)
         else:
             return 0.0
@@ -316,8 +328,8 @@ class ActorLearner(Process):
                 p_size = shared_vars.size
                 m = np.frombuffer(opt_st.ms, ctypes.c_float)
                 v = np.frombuffer(opt_st.vs, ctypes.c_float)
-                opt_st.lr.value =  1.0 * opt_st.lr.value * (1 - self.b2**T)**0.5 / (1 - self.b1**T) 
-                
+                opt_st.lr.value =  1.0 * opt_st.lr.value * (1 - self.b2**T)**0.5 / (1 - self.b1**T)
+
                 apply_grads_adam(m, v, g, p, p_size, opt_st.lr.value, self.b1, self.b2, self.e)
 
             elif self.optimizer_type == "adamax" and self.optimizer_mode == "shared":
@@ -331,18 +343,18 @@ class ActorLearner(Process):
                 u = np.frombuffer(opt_st.vs, ctypes.c_float)
 
                 apply_grads_adamax(m, u, g, p, p_size, lr, beta_1, beta_2, T)
-                    
+
             else: #local or shared rmsprop/momentum
                 lr = self.decay_lr()
                 if (self.optimizer_mode == "local"):
                     m = opt_st
                 else: #shared
                     m = np.frombuffer(opt_st.vars, ctypes.c_float)
-                
+
                 p = np.frombuffer(shared_vars.vars, ctypes.c_float)
                 p_size = shared_vars.size
                 _type = 0 if self.optimizer_type == "momentum" else 1
-                
+
                 apply_grads_mom_rmsprop(m, g, p, p_size, _type, lr, self.alpha, self.e)
 
     def rescale_reward(self, reward):
@@ -354,7 +366,7 @@ class ActorLearner(Process):
         else:
             # Clip immediate reward
             return np.sign(reward) * np.minimum(self.reward_clip_val, np.abs(reward))
-            
+
 
     def assign_vars(self, dest_net, params):
         feed_dict = {}
@@ -369,15 +381,15 @@ class ActorLearner(Process):
                 feed_dict[dest_net.params_ph[i]] = \
                     params[offset:offset+size].reshape(shape)
             offset += size
-        
-        self.session.run(dest_net.sync_with_shared_memory, 
+
+        self.session.run(dest_net.sync_with_shared_memory,
             feed_dict=feed_dict)
 
 
     def sync_net_with_shared_memory(self, dest_net, shared_mem_vars):
         feed_dict = {}
         offset = 0
-        params = np.frombuffer(shared_mem_vars.vars, 
+        params = np.frombuffer(shared_mem_vars.vars,
                                   ctypes.c_float)
         for i in range(len(dest_net.params)):
             shape = shared_mem_vars.var_shapes[i]
@@ -385,11 +397,11 @@ class ActorLearner(Process):
             feed_dict[dest_net.params_ph[i]] = \
                     params[offset:offset+size].reshape(shape)
             offset += size
-        
-        self.session.run(dest_net.sync_with_shared_memory, 
+
+        self.session.run(dest_net.sync_with_shared_memory,
             feed_dict=feed_dict)
 
-    
+
     def _get_summary_vars(self):
         episode_reward = tf.Variable(0., name='episode_reward')
         s1 = tf.summary.scalar('Episode_Reward_{}'.format(self.actor_id), episode_reward)
@@ -420,9 +432,8 @@ class ActorLearner(Process):
             feed_dict = {ph: val for ph, val in zip(self.summary_ph, args)}
             summaries = self.session.run(self.update_ops + [self.summary_op], feed_dict=feed_dict)[-1]
             self.supervisor.summary_computed(self.session, summaries, global_step=self.global_step.value())
-    
+
 
     def cleanup(self):
         self.save_vars(True)
         self.session.close()
-

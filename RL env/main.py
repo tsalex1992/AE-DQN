@@ -8,6 +8,7 @@ import numpy as np
 import utils.logger
 import multiprocessing
 import tensorflow as tf
+import csv
 
 from networks.q_network import QNetwork
 from multiprocessing import Process, Queue
@@ -22,9 +23,8 @@ from algorithms.intrinsic_motivation_actor_learner import PseudoCountA3CLearner,
 from algorithms.trpo_actor_learner import TRPOLearner
 from algorithms.pgq_actor_learner import PGQLearner
 from algorithms.cem_actor_learner import CEMLearner
-
 import signal
-
+import visdom
 logger = utils.logger.getLogger('main')
 logging = logger
 
@@ -74,7 +74,7 @@ def get_num_actions(rom_path, rom_name):
 def main(args):
     args.batch_size = None
     logger.debug('CONFIGURATION: {}'.format(args))
-    
+
     """ Set up the graph, the agents, and run the agents in parallel. """
     if args.env == 'GYM':
         from environments import atari_environment
@@ -82,7 +82,7 @@ def main(args):
         input_shape = atari_environment.get_input_shape(args.game)
     else:
         num_actions = get_num_actions(args.rom_path, args.game)
-    
+
     args.action_space = action_space
     args.summ_base_dir = '/tmp/summary_logs/{}/{}'.format(args.game, time.strftime('%m.%d/%H.%M'))
     logger.info('logging summaries to {}'.format(args.summ_base_dir))
@@ -95,7 +95,8 @@ def main(args):
         'args': args
     })
     args.network = Network
-
+    ## initialize visdom server
+    args.visdom = visdom.Visdom(port=args.display_port)
     #initialize shared variables
     args.learning_vars = SharedVars(network.params)
     args.opt_state = SharedVars(
@@ -120,7 +121,7 @@ def main(args):
         }, use_policy_head=False)
         args.baseline_vars = SharedVars(baseline_network.params)
         args.vf_input_shape = vf_input_shape
-        
+
     if args.alg_type in ['q', 'sarsa', 'dueling', 'dqn-cts']:
         args.target_vars = SharedVars(network.params)
         args.target_update_flags = SharedFlags(args.num_actor_learners)
@@ -130,6 +131,7 @@ def main(args):
     tf.reset_default_graph()
     args.barrier = Barrier(args.num_actor_learners)
     args.global_step = SharedCounter(0)
+    #ars.shared_visualizer = Visualizer(args.num_actor_learners) ## TODO to make it shared between the processes
     args.num_actions = num_actions
 
     cuda_visible_devices = os.getenv('CUDA_VISIBLE_DEVICES')
@@ -154,9 +156,9 @@ def main(args):
 
         args.actor_id = i
         args.device = '/gpu:{}'.format(i % num_gpus) if num_gpus else '/cpu:0'
-        
+
         args.random_seed = seed + i
-            
+
         #only used by TRPO
         args.task_queue = task_queue
         args.experience_queue = experience_queue
@@ -169,12 +171,14 @@ def main(args):
 
     try:
         for t in actor_learners:
+
             t.join()
     except KeyboardInterrupt:
         #Terminate with extreme prejudice
         for t in actor_learners:
+
             t.terminate()
-    
+
     logger.info('All training threads finished!')
     logger.info('Use seed={} to reproduce'.format(seed))
 
@@ -182,13 +186,13 @@ def main(args):
 def get_validated_params(args):
     #validate param
     if args.env=='ALE' and args.rom_path is None:
-        raise argparse.ArgumentTypeError('Need to specify the directory where the game roms are located, via --rom_path')         
+        raise argparse.ArgumentTypeError('Need to specify the directory where the game roms are located, via --rom_path')
     if args.reward_clip_val <= 0:
         raise argparse.ArgumentTypeError('value of --reward_clip_val option must be non-negative')
     if args.alg_type not in ALGORITHMS:
         raise argparse.ArgumentTypeError('alg_type `{}` not implemented'.format(args.alg_type))
 
-    # fix up frame_skip depending on whether it was an int or tuple 
+    # fix up frame_skip depending on whether it was an int or tuple
     if len(args.frame_skip) == 1:
         args.frame_skip = args.frame_skip[0]
     elif len(args.frame_skip) > 2:
@@ -224,7 +228,7 @@ def get_config():
     parser.add_argument('--no_share_weights', action='store_false', help='If set don\'t share parameters between policy and value function', dest='share_encoder_weights')
     parser.add_argument('--fc_layer_sizes', default=[60, 60], type=int, nargs='+', help='width of layers in fully connected architecture', dest='fc_layer_sizes')
     parser.add_argument('--seed', default=None, type=int, help='Specify random seed. Each process will get its own unique seed computed as seed+actor_id. Due to race conditions only 1 worker process should be used to get deterministic results', dest='seed')
-
+    parser.add_argument('--display_port', type=int, default=8097, help='visdom port of the web display')
     #optimizer args
     parser.add_argument('--opt_type', default='rmsprop', help='Type of optimizer: rmsprop, momentum, adam, adamax', dest='opt_type')
     parser.add_argument('--opt_mode', default='shared', help='Whether to use \"local\" or \"shared\" vector(s) for the momemtum/optimizer statistics', dest='opt_mode')
@@ -242,31 +246,31 @@ def get_config():
     parser.add_argument('--clip_norm_type', default='global', help='Whether to clip grads by their norm or not. Values: ignore (no clipping), local (layer-wise norm), global (global norm)', dest='clip_norm_type')
     parser.add_argument('--rescale_rewards', action='store_true', help='If True, rewards will be rescaled (dividing by the max. possible reward) to be in the range [-1, 1]. If False, rewards will be clipped to be in the range [-REWARD_CLIP, REWARD_CLIP]', dest='rescale_rewards')
     parser.add_argument('--reward_clip_val', default=1.0, type=float, help='Clip rewards outside of [-REWARD_CLIP, REWARD_CLIP]', dest='reward_clip_val')
-    
+
     #q-learning args
     parser.add_argument('-ea', '--epsilon_annealing_steps', default=1000000, type=int, help='Nr. of global steps during which the exploration epsilon will be annealed', dest='epsilon_annealing_steps')
     parser.add_argument('--final_epsilon', default=0.1, type=float, help='Final epsilon after annealing is complete. Only used for dqn-cts', dest='final_epsilon')
     parser.add_argument('--grads_update_steps', default=5, type=int, help='Nr. of local steps during which grads are accumulated before applying them to the shared network parameters (needed for 1-step Q/Sarsa learning)', dest='grads_update_steps')
-    parser.add_argument('--q_target_update_steps', default=10000, type=int, help='Interval (in nr. of global steps) at which the parameters of the Q target network are updated (obs! 1 step = 4 video frames) (needed for Q-learning and Sarsa)', dest='q_target_update_steps') 
+    parser.add_argument('--q_target_update_steps', default=10000, type=int, help='Interval (in nr. of global steps) at which the parameters of the Q target network are updated (obs! 1 step = 4 video frames) (needed for Q-learning and Sarsa)', dest='q_target_update_steps')
     parser.add_argument('--replay_size', default=1000, type=int, help='Maximum capacity of replay memory', dest='replay_size')
     parser.add_argument('--batch_update_size', default=32, type=int, help='Minibatch size for q-learning updates', dest='batch_update_size')
     parser.add_argument('--exploration_strategy', default='epsilon-greedy', type=str, help='boltzmann or epsilon-greedy', dest='exploration_strategy')
     parser.add_argument('--temperature', default=1.0, type=float, help='temperature to use for boltzmann exploration', dest='bolzmann_temperature')
 
-    #a3c args 
+    #a3c args
     parser.add_argument('--entropy', default=0.01, type=float, help='Strength of the entropy regularization term (needed for actor-critic)', dest='entropy_regularisation_strength')
     parser.add_argument('--max_global_steps', default=200000000, type=int, help='Max. number of training steps', dest='max_global_steps')
     parser.add_argument('--max_local_steps', default=5, type=int, help='Number of steps to gain experience from before every update for the Q learning/A3C algorithm', dest='max_local_steps')
-    
+
     #trpo args
     parser.add_argument('--num_epochs', default=1000, type=int, help='number of epochs for which to run TRPO', dest='num_epochs')
     parser.add_argument('--episodes_per_batch', default=50, type=int, help='number of episodes to batch for TRPO updates', dest='episodes_per_batch')
     parser.add_argument('--trpo_max_rollout', default=1000, type=int, help='max rollout steps per trpo episode', dest='max_rollout')
     parser.add_argument('--cg_subsample', default=0.1, type=float, help='rate at which to subsample data for TRPO conjugate gradient iteration', dest='cg_subsample')
-    parser.add_argument('--cg_damping', default=0.001, type=float, help='conjugate gradient damping weight', dest='cg_damping')   
+    parser.add_argument('--cg_damping', default=0.001, type=float, help='conjugate gradient damping weight', dest='cg_damping')
     parser.add_argument('--max_kl', default=0.01, type=float, help='max kl divergence for TRPO updates', dest='max_kl')
     parser.add_argument('--td_lambda', default=1.0, type=float, help='lambda parameter for GAE', dest='td_lambda')
-    
+
     #cts args
     parser.add_argument('--cts_bins', default=8, type=int, help='number of bins to assign pixel values', dest='cts_bins')
     parser.add_argument('--cts_rescale_dim', default=42, type=int, help='rescaled image size to use with cts density model', dest='cts_rescale_dim')
@@ -285,5 +289,3 @@ def get_config():
 
 if __name__ == '__main__':
     main(get_config())
-
- 
