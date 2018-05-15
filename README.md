@@ -15,3 +15,11 @@ https://github.com/sangjin-park/tensorflow-rl
 
 For gym environment games
 http://gym.openai.com/envs/#atari
+ Project site:
+https://tomzahavy.wixsite.com/rlprojects/action-eliminating-dqn
+
+General DQN info:
+https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
+
+Model free AE algorithm(page 1095):
+http://www.jmlr.org/papers/volume7/evendar06a/evendar06a.pdf
