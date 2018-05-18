@@ -13,8 +13,8 @@ class SharedCounter(object):
 
     def increment(self, elapsed_steps=None):
         self.val.value += 1
-        if ((elapsed_steps is not None) 
-            and ((self.val.value - self.last_step_update_target.value) 
+        if ((elapsed_steps is not None)
+            and ((self.val.value - self.last_step_update_target.value)
                 >= elapsed_steps)):
             self.last_step_update_target.value = self.val.value
             return self.val.value, True
@@ -50,7 +50,7 @@ class SharedVars(object):
             var.get_shape().as_list()
             for var in params]
         self.size = int(sum([np.prod(shape) for shape in self.var_shapes]))
-        self.step = RawValue(ctypes.c_int, step)
+        self.step = RawValue(ctypes.c_int, step) #returns a c type object allocated from shared memory
 
         if opt_type == 'adam':
             self.ms = self.malloc_contiguous(self.size)
@@ -67,7 +67,7 @@ class SharedVars(object):
         else:
             self.vars = self.malloc_contiguous(self.size)
 
-            
+
     def malloc_contiguous(self, size, initial_val=None):
         if initial_val is None:
             return RawArray(ctypes.c_float, size)
@@ -77,5 +77,4 @@ class SharedVars(object):
 
 class SharedFlags(object):
     def __init__(self, num_actors):
-        self.updated = RawArray(ctypes.c_int, num_actors)
-            
+        self.updated = RawArray(ctypes.c_int, num_actors) # returns a c type array allocated from shared memory

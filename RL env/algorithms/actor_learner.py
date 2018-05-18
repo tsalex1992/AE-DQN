@@ -156,12 +156,12 @@ class ActorLearner(Process):
         self.summary_op = tf.summary.merge_all()
         # open log file each agent
         with open(str(self.filename), 'w') as file_name:
-            
+
             self.wr = csv.writer(file_name, quoting=csv.QUOTE_ALL)
             print("in actor learner file, self.wr type is {}".format(type(self.wr)))
         #print ("Created actor learner")
 
-
+    ### calculates the future reward from each state to the destination ###
     def compute_targets(self, rewards, R):
         size = len(rewards)
         y_batch = list()

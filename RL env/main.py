@@ -46,6 +46,7 @@ def setup_kill_signal_handler(learner):
 
 ALGORITHMS = {
     'q': (NStepQLearner, QNetwork),
+    'AE': (AElearner, QNetwork),
     'sarsa': (OneStepSARSALearner, QNetwork),
     'dueling': (DuelingLearner, DuelingNetwork),
     'a3c': (A3CLearner, PolicyValueNetwork),
@@ -94,6 +95,8 @@ def main(args):
         'num_act': num_actions,
         'args': args
     })
+    if arg.alg_type == 'AE':
+        args.
     args.network = Network
     ## initialize visdom server
     args.visdom = visdom.Visdom(port=args.display_port)
