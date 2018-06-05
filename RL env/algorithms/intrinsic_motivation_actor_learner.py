@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import utils.logger
 import tensorflow as tf
-
+import random
 from skimage.transform import resize
 from collections import deque
 from utils import checkpoint_utils
@@ -106,6 +106,47 @@ class DensityModelMixin(object):
             raw_data = f.read()
 
         self.density_model.set_state(pickle.loads(raw_data))
+
+class DensityModelMixinAE(object):
+        """
+        Mixin to provide initialization and synchronization methods for density models
+        """
+        def _init_density_model(self, args):
+            self.density_model_update_steps = 20*args.q_target_update_steps
+            self.density_model_update_flags = []
+            for x in range(0, ars.num_actions):
+                self.density_model_update_flags[x] = args.density_model_update_flags
+
+            model_args = {
+                'height': args.cts_rescale_dim,
+                'width': args.cts_rescale_dim,
+                'num_bins': args.cts_bins,
+                'beta': args.cts_beta
+            }
+            self.density_model = []
+            for x in range (0,args.num_actions):
+                if args.density_model == 'cts':
+                    self.density_model[x] = CTSDensityModel(**model_args)
+                else:
+                    self.density_model[x] = PerPixelDensityModel(**model_args)
+
+
+        def write_density_model(self , index):
+            logger.info('T{} Writing Pickled Density  Model of action{} to File...'.format(self.actor_id,index))
+            raw_data = pickle.dumps(self.density_model[index].get_state(), protocol=2)
+            with self.barrier.counter.lock, open('/tmp/density_model'+str(index)+'.pkl', 'wb') as f:
+                f.write(raw_data)
+
+            for i in range(len(self.density_model_update_flags[index].updated)):
+                self.density_model_update_flags[index].updated[i] = 1
+
+        def read_density_model(self,index):
+            logger.info('T{} Synchronizing Density Model...'.format(self.actor_id))
+            with self.barrier.counter.lock, open('/tmp/density_model'+str(index)+'.pkl', 'rb') as f:
+                raw_data = f.read()
+
+            self.density_model[index].set_state(pickle.loads(raw_data))
+
 
 
 class A3CDensityModelMixin(DensityModelMixin):
@@ -212,6 +253,319 @@ class PseudoCountA3CLSTMLearner(A3CLSTMLearner, A3CDensityModelMixin):
     def train(self):
         self._train()
 
+        return new_action, q_values
+        
+class AElearner(ValueBasedLearner,DensityModelMixinAE):
+    def __init__(self, args):
+        self.args = args
+
+        super(AElearner, self).__init__(args)
+        self.cts_eta = args.cts_eta
+        self.cts_beta = args.cts_beta
+        self.batch_size = args.batch_update_size
+        self.replay_memory = ReplayMemory(
+            args.replay_size,
+            self.local_network.get_input_shape(),
+            self.num_actions)
+        #inits desity model(chooses how many steps for update )
+        #20 * q targt update steps
+        self._init_density_model(args)
+        #computes loss
+        self._double_dqn_op()
+
+
+
+        def minimize_action_pool(self, state):
+            new_actions = np.zeros([self.num_actions])
+            #TODO get q upperbound values
+            # q_upper
+            q_values = self.session.run(
+                    self.local_network.output_layer,
+                    feed_dict={self.local_network.input_ph: [state]})[0]
+            #TODO V lower upperbound
+            Vlow = slef.Vlower(state)
+
+            for index, action in enumerate(new_actions):
+                action = q_values[index] >= Vlow
+            return new_actions
+
+
+
+        def choose_next_action(self, state):
+            new_action = np.zeros([self.num_actions])
+            #TODO check session run
+            q_values = self.session.run(
+                self.local_network.output_layer,
+                feed_dict={self.local_network.input_ph: [state]})[0]
+            secure_random = random.SystemRandom()
+            action_pool = minimize_action_pool(state)
+            random_index = secure_random.randrange(0,len(action_pool))
+            indexes_valid_actions=[]
+            for i, item in enumerate(action_pool):
+                if item == 1 :
+                    indexes_valid_actions.append(i)
+
+
+
+            random_index = secure_random.choice(indexes_valid_actions)
+
+            new_action[random_index] = 1
+            self.reduce_thread_epsilon()
+            return new_action,q_values
+
+    def generate_final_epsilon(self):
+        if self.num_actor_learners == 1:
+            return self.args.final_epsilon
+        else:
+            return super(PseudoCountQLearner, self).generate_final_epsilon()
+
+
+    def _get_summary_vars(self):
+        q_vars = super(PseudoCountQLearner, self)._get_summary_vars()
+
+        bonus_q05 = tf.Variable(0., name='novelty_bonus_q05')
+        s1 = tf.summary.scalar('Novelty_Bonus_q05_{}'.format(self.actor_id), bonus_q05)
+        bonus_q50 = tf.Variable(0., name='novelty_bonus_q50')
+        s2 = tf.summary.scalar('Novelty_Bonus_q50_{}'.format(self.actor_id), bonus_q50)
+        bonus_q95 = tf.Variable(0., name='novelty_bonus_q95')
+        s3 = tf.summary.scalar('Novelty_Bonus_q95_{}'.format(self.actor_id), bonus_q95)
+
+        augmented_reward = tf.Variable(0., name='augmented_episode_reward')
+        s4 = tf.summary.scalar('Augmented_Episode_Reward_{}'.format(self.actor_id), augmented_reward)
+
+        return q_vars + [bonus_q05, bonus_q50, bonus_q95, augmented_reward]
+
+
+    #TODO: refactor to make this cleaner
+    def prepare_state(self, state, total_episode_reward, steps_at_last_reward,
+                      ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward):
+        # Start a new game on reaching terminal state
+        if episode_over:
+            T = self.global_step.value() * self.max_local_steps
+            t = self.local_step
+            e_prog = float(t)/self.epsilon_annealing_steps
+            episode_ave_max_q = episode_ave_max_q/float(ep_t)
+            s1 = "Q_MAX {0:.4f}".format(episode_ave_max_q)
+            s2 = "EPS {0:.4f}".format(self.epsilon)
+
+            self.scores.insert(0, total_episode_reward)
+            if len(self.scores) > 100:
+                self.scores.pop()
+
+            logger.info('T{0} / STEP {1} / REWARD {2} / {3} / {4}'.format(
+                self.actor_id, T, total_episode_reward, s1, s2))
+            logger.info('ID: {0} -- RUNNING AVG: {1:.0f} +- {2:.0f} -- BEST: {3:.0f}'.format(
+                self.actor_id,
+                np.array(self.scores).mean(),
+                2*np.array(self.scores).std(),
+                max(self.scores),
+            ))
+            self.vis.plot_current_errors(T,total_episode_reward)
+            self.wr.writerow(T)
+            self.wr.writerow(total_episode_reward)
+            #print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
+
+
+            self.log_summary(
+                total_episode_reward,
+                episode_ave_max_q,
+                self.epsilon,
+                np.percentile(bonuses, 5),
+                np.percentile(bonuses, 50),
+                np.percentile(bonuses, 95),
+                total_augmented_reward,
+            )
+
+            state = self.emulator.get_initial_state()
+            ep_t = 0
+            total_episode_reward = 0
+            episode_ave_max_q = 0
+            episode_over = False
+
+        return (
+            state,
+            total_episode_reward,
+            steps_at_last_reward,
+            ep_t,
+            episode_ave_max_q,
+            episode_over
+        )
+
+
+    def _double_dqn_op(self):
+        q_local_action = tf.cast(tf.argmax(
+            self.local_network.output_layer, axis=1), tf.int32)
+        q_target_max = utils.ops.slice_2d(
+            self.target_network.output_layer,
+            tf.range(0, self.batch_size),
+            q_local_action,
+        )
+        self.one_step_reward = tf.placeholder(tf.float32, self.batch_size, name='one_step_reward')
+        self.is_terminal = tf.placeholder(tf.bool, self.batch_size, name='is_terminal')
+
+        self.y_target = self.one_step_reward + self.cts_eta*self.gamma*q_target_max \
+            * (1 - tf.cast(self.is_terminal, tf.float32))
+
+        self.double_dqn_loss = self.local_network._value_function_loss(
+            self.local_network.q_selected_action
+            - tf.stop_gradient(self.y_target))
+
+        self.double_dqn_grads = tf.gradients(self.double_dqn_loss, self.local_network.params)
+
+
+    # def batch_update(self):
+    #     if len(self.replay_memory) < self.replay_memory.maxlen//10:
+    #         return
+
+    #     s_i, a_i, r_i, s_f, is_terminal = self.replay_memory.sample_batch(self.batch_size)
+
+    #     feed_dict={
+    #         self.one_step_reward: r_i,
+    #         self.target_network.input_ph: s_f,
+    #         self.local_network.input_ph: np.vstack([s_i, s_f]),
+    #         self.local_network.selected_action_ph: np.vstack([a_i, a_i]),
+    #         self.is_terminal: is_terminal
+    #     }
+    #     grads = self.session.run(self.double_dqn_grads, feed_dict=feed_dict)
+    #     self.apply_gradients_to_shared_memory_vars(grads)
+
+
+    def batch_update(self):
+        if len(self.replay_memory) < self.replay_memory.maxlen//10:
+            return
+
+        s_i, a_i, r_i, s_f, is_terminal = self.replay_memory.sample_batch(self.batch_size)
+
+        feed_dict={
+            self.local_network.input_ph: s_f,
+            self.target_network.input_ph: s_f,
+            self.is_terminal: is_terminal,
+            self.one_step_reward: r_i,
+        }
+        y_target = self.session.run(self.y_target, feed_dict=feed_dict)
+
+        feed_dict={
+            self.local_network.input_ph: s_i,
+            self.local_network.target_ph: y_target,
+            self.local_network.selected_action_ph: a_i
+        }
+        grads = self.session.run(self.local_network.get_gradients,
+                                 feed_dict=feed_dict)
+        self.apply_gradients_to_shared_memory_vars(grads)
+
+
+    def train(self):
+        """ Main actor learner loop for n-step Q learning. """
+        logger.debug("Actor {} resuming at Step {}, {}".format(self.actor_id,
+            self.global_step.value(), time.ctime()))
+
+        s = self.emulator.get_initial_state()
+
+        s_batch = list()
+        a_batch = list()
+        y_batch = list()
+        bonuses = deque(maxlen=1000)
+        episode_over = False
+
+        t0 = time.time()
+        global_steps_at_last_record = self.global_step.value()
+        while (self.global_step.value() < self.max_global_steps):
+            # # Sync local learning net with shared mem
+            # self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
+            # self.save_vars()
+            rewards =      list()
+            states =       list()
+            actions =      list()
+            max_q_values = list()
+            local_step_start = self.local_step
+            total_episode_reward = 0
+            total_augmented_reward = 0
+            episode_ave_max_q = 0
+            ep_t = 0
+
+            while not episode_over:
+                # Sync local learning net with shared mem
+                self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
+                self.save_vars()
+
+                # Choose next action and execute it
+                a, q_values = self.choose_next_action(s)
+                #TODO here is the update of the iteration
+                new_s, reward, episode_over = self.emulator.next(a)
+                total_episode_reward += reward
+                max_q = np.max(q_values)
+                prev_s = s
+                current_frame = new_s[...,-1]
+                prev_farame = prev_s[...,-1]
+                bonus = self.density_model[a].update2(prev_frame)
+
+                # Rescale or clip immediate reward
+                reward = self.rescale_reward(self.rescale_reward(reward) )
+                total_augmented_reward += reward
+                ep_t += 1
+
+                rewards.append(reward)
+                states.append(s)
+                actions.append(a)
+                max_q_values.append(max_q)
+
+                s = new_s
+                self.local_step += 1
+                episode_ave_max_q += max_q
+
+                global_step, _ = self.global_step.increment()
+                ##We update the target network here
+                if global_step % self.q_target_update_steps == 0:
+                    self.update_target()
+                ## We update the desity model here
+                if global_step % self.density_model_update_steps == 0:
+                    #returns the index of the chosen action
+                    self.write_density_model(np.argmax(a))
+
+                # Sync local tensorflow target network params with shared target network params
+                if self.target_update_flags.updated[self.actor_id] == 1:
+                    self.sync_net_with_shared_memory(self.target_network, self.target_vars)
+                    self.target_update_flags.updated[self.actor_id] = 0
+                if self.density_model_update_flags.updated[self.actor_id] == 1:
+                    #returns the index of the chosen action
+                    self.read_density_model(np.argmax(a))
+                    self.density_model_update_flags.updated[self.actor_id] = 0
+
+                if self.local_step % self.q_update_interval == 0:
+                    self.batch_update()
+
+                if self.is_master() and (self.local_step % 500 == 0):
+                    bonus_array = np.array(bonuses)
+                    steps = global_step - global_steps_at_last_record
+                    global_steps_at_last_record = global_step
+
+                    logger.debug('Mean Bonus={:.4f} / Max Bonus={:.4f} / STEPS/s={}'.format(
+                        bonus_array.mean(), bonus_array.max(), steps/float(time.time()-t0)))
+                    t0 = time.time()
+
+
+            else:
+                #compute monte carlo return
+                mc_returns = np.zeros((len(rewards),), dtype=np.float32)
+                running_total = 0.0
+                for i, r in enumerate(reversed(rewards)):
+                    running_total = r + self.gamma*running_total
+                    mc_returns[len(rewards)-i-1] = running_total
+
+                mixed_returns = self.cts_eta*np.asarray(rewards) + (1-self.cts_eta)*mc_returns
+
+                #update replay memory
+                states.append(new_s)
+                episode_length = len(rewards)
+                for i in range(episode_length):
+                    self.replay_memory.append(
+                        states[i],
+                        actions[i],
+                        mixed_returns[i],
+                        i+1 == episode_length)
+
+            s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
+                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
 
 class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
     """
@@ -231,8 +585,10 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
             args.replay_size,
             self.local_network.get_input_shape(),
             self.num_actions)
-
+        #inits desity model(chooses how many steps for update )
+        #20 * q targt update steps
         self._init_density_model(args)
+        #computes loss
         self._double_dqn_op()
 
 
@@ -413,7 +769,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
                 # Choose next action and execute it
                 a, q_values = self.choose_next_action(s)
-
+                #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward
                 max_q = np.max(q_values)
@@ -437,9 +793,10 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
                 episode_ave_max_q += max_q
 
                 global_step, _ = self.global_step.increment()
-
+                ##We update the target network here
                 if global_step % self.q_target_update_steps == 0:
                     self.update_target()
+                ## We update the desity model here
                 if global_step % self.density_model_update_steps == 0:
                     self.write_density_model()
 

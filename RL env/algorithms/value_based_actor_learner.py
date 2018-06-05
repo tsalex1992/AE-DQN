@@ -5,7 +5,7 @@ import ctypes
 import utils
 import time
 import sys
-
+import math
 from utils.decorators import only_on_train
 from utils.hogupdatemv import copy
 from networks.q_network import QNetwork
@@ -89,6 +89,32 @@ class ValueBasedLearner(ActorLearner):
         probs = exp_minus_max / exp_minus_max.sum()
 
         return np.random.choice(self.num_actions, p=probs)
+
+    def bootstrap_min_value(self, state, episode_over):
+            if episode_over:
+                R = 0
+            else:
+                q_target_values = self.session.run(
+                    self.target_network.output_layer,
+                    feed_dict={self.target_network.input_ph: [state]})
+                R = np.min(q_target_values)
+
+            return R
+
+    def minimize_action_pool(self, state):
+        new_actions = np.zeros([self.num_actions])
+        #TODO get q upperbound values
+        # q_upper
+        q_values = self.session.run(
+                self.local_network.output_layer,
+                feed_dict={self.local_network.input_ph: [state]})[0]
+        #TODO V lower upperbound
+        Vlow = slef.Vlower(state)
+
+        for index, action in enumerate(new_actions):
+            action = q_values[index] >= Vlow
+        return new_actions
+
 
 
     def choose_next_action(self, state):
@@ -181,169 +207,6 @@ class ValueBasedLearner(ActorLearner):
 
         return state, total_episode_reward, steps_at_last_reward, ep_t, episode_ave_max_q, episode_over
 
-class AElearner(ActorLearner):
-    def __init__(self, args, network_type=QNetwork):
-
-        super(ValueBasedLearner, self).__init__(args)
-
-        # Shared mem vars
-        self.target_vars = args.target_vars
-        self.target_update_flags = args.target_update_flags
-        self.q_target_update_steps = args.q_target_update_steps
-
-        self.scores = list()
-
-        conf_learning = {'name': "local_learning_{}".format(self.actor_id),
-                         'input_shape': self.input_shape,
-                         'num_act': self.num_actions,
-                         'args': args}
-        conf_target = conf_learning.copy()
-        conf_target['name'] = 'local_target_{}'.format(self.actor_id)
-
-        self.local_network = network_type(conf_learning)
-        self.target_network = network_type(conf_target)
-
-        if self.is_master():
-            var_list = self.local_network.params + self.target_network.params
-            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3,
-                                        keep_checkpoint_every_n_hours=2)
-
-        # Exploration epsilons
-        self.initial_epsilon = 1.0
-        self.final_epsilon = self.generate_final_epsilon()
-        self.epsilon = self.initial_epsilon if self.is_train else args.final_epsilon
-        self.epsilon_annealing_steps = args.epsilon_annealing_steps
-        self.exploration_strategy = args.exploration_strategy
-        self.bolzmann_temperature = args.bolzmann_temperature
-
-
-    def generate_final_epsilon(self):
-        values = [.01, .05, .1, .2]
-        return values[self.actor_id % 4]
-
-
-    def reduce_thread_epsilon(self):
-        """ Linear annealing """
-        if self.epsilon > self.final_epsilon:
-            self.epsilon -= (self.initial_epsilon - self.final_epsilon) / self.epsilon_annealing_steps
-
-
-    def _get_summary_vars(self):
-        episode_reward = tf.Variable(0., name='episode_reward')
-        s1 = tf.summary.scalar('Episode_Reward_{}'.format(self.actor_id), episode_reward)
-
-        episode_avg_max_q = tf.Variable(0., name='episode_avg_max_q')
-        s2 = tf.summary.scalar('Max_Q_Value_{}'.format(self.actor_id), episode_avg_max_q)
-
-        logged_epsilon = tf.Variable(0., name='epsilon_'.format(self.actor_id))
-        s3 = tf.summary.scalar('Epsilon_{}'.format(self.actor_id), logged_epsilon)
-
-        return [episode_reward, episode_avg_max_q, logged_epsilon]
-
-
-    def epsilon_greedy(self, q_values):
-        if np.random.rand() <= self.epsilon:
-            return np.random.randint(0, self.num_actions)
-        else:
-            return np.argmax(q_values)
-
-
-    def boltzmann_exploration(self, q_values):
-        exp_minus_max = np.exp(q_values - q_values.max())
-        probs = exp_minus_max / exp_minus_max.sum()
-
-        return np.random.choice(self.num_actions, p=probs)
-
-
-    def choose_next_action(self, state):
-        """ Epsilon greedy """
-        new_action = np.zeros([self.num_actions])
-
-        q_values = self.session.run(
-            self.local_network.output_layer,
-            feed_dict={self.local_network.input_ph: [state]})[0]
-
-        if self.exploration_strategy == 'epsilon-greedy':
-            action_index = self.epsilon_greedy(q_values)
-        else:
-            action_index = self.boltzmann_exploration(q_values)
-
-        new_action[action_index] = 1
-        self.reduce_thread_epsilon()
-
-        return new_action, q_values
-
-
-    def bootstrap_value(self, state, episode_over):
-        if episode_over:
-            R = 0
-        else:
-            q_target_values = self.session.run(
-                self.target_network.output_layer,
-                feed_dict={self.target_network.input_ph: [state]})
-            R = np.max(q_target_values)
-
-        return R
-
-
-    def apply_update(self, states, actions, targets):
-        feed_dict={
-            self.local_network.input_ph: states,
-            self.local_network.target_ph: targets,
-            self.local_network.selected_action_ph: actions,
-        }
-        grads = self.session.run(
-            self.local_network.get_gradients,
-            feed_dict=feed_dict)
-
-        self.apply_gradients_to_shared_memory_vars(grads)
-
-
-    def update_target(self):
-        copy(np.frombuffer(self.target_vars.vars, ctypes.c_float),
-              np.frombuffer(self.learning_vars.vars, ctypes.c_float))
-
-        # Set shared flags
-        for i in range(len(self.target_update_flags.updated)):
-            self.target_update_flags.updated[i] = 1
-
-
-    def prepare_state(self, state, total_episode_reward, steps_at_last_reward,
-                      ep_t, episode_ave_max_q, episode_over):
-        # Start a new game on reaching terminal state
-        if episode_over:
-            T = self.global_step.value()
-            t = self.local_step
-            e_prog = float(t)/self.epsilon_annealing_steps
-            episode_ave_max_q = episode_ave_max_q/float(ep_t)
-            s1 = "Q_MAX {0:.4f}".format(episode_ave_max_q)
-            s2 = "EPS {0:.4f}".format(self.epsilon)
-
-            self.scores.insert(0, total_episode_reward)
-            if len(self.scores) > 100:
-                self.scores.pop()
-
-            logger.info('T{0} / STEP {1} / REWARD {2} / {3} / {4}'.format(
-                self.actor_id, T, total_episode_reward, s1, s2))
-            logger.info('ID: {0} -- RUNNING AVG: {1:.0f} ± {2:.0f} -- BEST: {3:.0f}'.format(
-                self.actor_id,
-                np.array(self.scores).mean(),
-                2*np.array(self.scores).std(),
-                max(self.scores),
-            ))
-            self.vis.plot_current_errors(T,total_episode_reward)
-            self.log_summary(
-                total_episode_reward,
-                episode_ave_max_q,
-                self.epsilon)
-
-            state = self.emulator.get_initial_state()
-            total_episode_reward = 0
-            episode_ave_max_q = 0
-            episode_over = False
-            ep_t = 0
-
-        return state, total_episode_reward, steps_at_last_reward, ep_t, episode_ave_max_q, episode_over
 
 
 
@@ -376,7 +239,8 @@ class NStepQLearner(ValueBasedLearner):
             states =  list()
             actions = list()
             local_step_start = self.local_step
-
+            ##### this is the loop from the paper #####
+            #TODO add abs(Qupper - Qlower) <epsilon(1-gama)/2
             while not (episode_over
                 or (self.local_step - local_step_start == self.max_local_steps)):
 
@@ -413,7 +277,7 @@ class NStepQLearner(ValueBasedLearner):
 
                 self.local_network.global_step = global_step
             # updates max reward from the current state of the target network if the episode isn't over (else 0)
-            #Rmax 
+            #Rmax
             R = self.bootstrap_value(s, episode_over)
             ### calculates the future reward from each state to the destination ###
             #horizon reward notation

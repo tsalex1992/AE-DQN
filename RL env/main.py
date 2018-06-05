@@ -19,7 +19,7 @@ from utils.shared_memory import SharedCounter, SharedVars, SharedFlags, Barrier
 from algorithms.policy_based_actor_learner import A3CLearner, A3CLSTMLearner
 from algorithms.sequence_decoder_actor_learner import ActionSequenceA3CLearner, ARA3CLearner
 from algorithms.value_based_actor_learner import NStepQLearner, DuelingLearner, OneStepSARSALearner
-from algorithms.intrinsic_motivation_actor_learner import PseudoCountA3CLearner, PseudoCountA3CLSTMLearner, PseudoCountQLearner
+from algorithms.intrinsic_motivation_actor_learner import PseudoCountA3CLearner, PseudoCountA3CLSTMLearner, PseudoCountQLearner, AElearner
 from algorithms.trpo_actor_learner import TRPOLearner
 from algorithms.pgq_actor_learner import PGQLearner
 from algorithms.cem_actor_learner import CEMLearner
@@ -95,13 +95,12 @@ def main(args):
         'num_act': num_actions,
         'args': args
     })
-    if arg.alg_type == 'AE':
-        args.
+
     args.network = Network
     ## initialize visdom server
     args.visdom = visdom.Visdom(port=args.display_port)
     #initialize shared variables
-    args.learning_vars = SharedVars(network.params)
+    args.learning_vars = SharedVars(network.params) #size, step and optimizer
     args.opt_state = SharedVars(
         network.params, opt_type=args.opt_type, lr=args.initial_lr
     ) if args.opt_mode == 'shared' else None
@@ -266,8 +265,8 @@ def get_config():
     parser.add_argument('--temperature', default=1.0, type=float, help='temperature to use for boltzmann exploration', dest='bolzmann_temperature')
 
     #AE args
-    parser.add_argument('--ae_delta', default=0.01, type=float, help='uncertanty in choice of action', dest='ae_delta)
-    parser.add_argument('--ae_epsilon', default=0.5, type=float, help='Distance from real Q', dest='ae_epsilon)
+    parser.add_argument('--ae_delta', default=0.01, type=float, help='uncertanty in choice of action', dest='ae_delta')
+    parser.add_argument('--ae_epsilon', default=0.5, type=float, help='Distance from real Q', dest='ae_epsilon')
 
     #a3c args
     parser.add_argument('--entropy', default=0.01, type=float, help='Strength of the entropy regularization term (needed for actor-critic)', dest='entropy_regularisation_strength')

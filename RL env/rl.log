@@ -9710,3 +9710,19 @@ Please switch to tf.train.MonitoredTrainingSession
 [2018-05-15 20:42:17] INFO [MainThread:142] T1 / EPISODE 4594 / STEP 4545.889k / MEAN REWARD 369.8 / 193 STEPS/s
 [2018-05-15 20:42:19] INFO [MainThread:142] T0 / EPISODE 4583 / STEP 4546.222k / MEAN REWARD 366.5 / 193 STEPS/s
 [2018-05-15 20:42:21] INFO [MainThread:37] Signal 2 detected, cleaning up.
+[2018-06-05 13:27:27] INFO [MainThread:89] logging summaries to /tmp/summary_logs/Pong-v0/06.05/13.27
+[2018-06-05 13:27:28] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:267: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-06-05 13:27:29] INFO [MainThread:116] Running local_init_op.
+[2018-06-05 13:27:29] INFO [MainThread:116] Done running local_init_op.
+[2018-06-05 13:27:29] INFO [MainThread:116] Starting standard services.
+[2018-06-05 13:27:29] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/06.05/13.27/model.ckpt
+[2018-06-05 13:27:29] INFO [MainThread:116] Starting queue runners.
+[2018-06-05 13:27:29] INFO [MainThread:116] Restoring parameters from checkpoints/Pong-v0/a3c/model-50076
+[2018-06-05 13:27:34] INFO [MainThread:212] EPISODE 0 -- REWARD: -21.0, RUNNING AVG: -21.0±0.0, BEST: -21.0
+[2018-06-05 13:27:37] INFO [MainThread:212] EPISODE 1 -- REWARD: -21.0, RUNNING AVG: -21.0±0.0, BEST: -21.0
+[2018-06-05 13:27:40] INFO [MainThread:212] EPISODE 2 -- REWARD: -20.0, RUNNING AVG: -20.7±0.9, BEST: -20.0
+[2018-06-05 13:27:44] INFO [MainThread:212] EPISODE 3 -- REWARD: -20.0, RUNNING AVG: -20.5±1.0, BEST: -20.0
+[2018-06-05 13:27:45] INFO [MainThread:189] All training threads finished!
+[2018-06-05 13:27:45] INFO [MainThread:190] Use seed=436900920 to reproduce
