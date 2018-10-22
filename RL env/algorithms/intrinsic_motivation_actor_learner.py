@@ -115,8 +115,9 @@ class DensityModelMixinAE(object):
         def _init_density_model(self, args):
             self.density_model_update_steps = 20*args.q_target_update_steps
             self.density_model_update_flags = []
-            for x in range(0, ars.num_actions):
-                self.density_model_update_flags[x] = args.density_model_update_flags
+            for x in range(0, args.num_actions):
+                self.density_model_update_flags.append(args.density_model_update_flags)
+                print("x is: {}".format(x))
 
             model_args = {
                 'height': args.cts_rescale_dim,
@@ -127,9 +128,9 @@ class DensityModelMixinAE(object):
             self.density_model = []
             for x in range (0,args.num_actions):
                 if args.density_model == 'cts':
-                    self.density_model[x] = CTSDensityModel(**model_args)
+                    self.density_model.append(CTSDensityModel(**model_args))
                 else:
-                    self.density_model[x] = PerPixelDensityModel(**model_args)
+                    self.density_model.append(PerPixelDensityModel(**model_args))
 
 
         def write_density_model(self , index):
@@ -158,6 +159,7 @@ class A3CDensityModelMixin(DensityModelMixin):
         """ Main actor learner loop for advantage actor critic learning. """
         logger.debug("Actor {} resuming at Step {}".format(self.actor_id,
             self.global_step.value()))
+        print("we are in class A3A3CDensityModelMixin")
 
         bonuses = deque(maxlen=100)
         while (self.global_step.value() < self.max_global_steps):
@@ -266,7 +268,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self.batch_size = args.batch_update_size
         self.replay_memory = ReplayMemory(
             args.replay_size,
-            self.local_network.get_input_shape(),
+            self.local_network_upper.get_input_shape(),
+            # self.local_network.get_input_shape(),
             self.num_actions)
         #inits desity model(chooses how many steps for update )
         #20 * q targt update steps
@@ -274,13 +277,14 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #computes loss
         self._double_dqn_op()
         self.which_net_to_update_counter = 0
-
+        print("In AE class")
 
 
 
 
 
         def choose_next_action(self, state):
+            print("we use our AE new algorithm choose next action")
             new_action = np.zeros([self.num_actions])
             #TODO check session run
             q_values = self.session.run(
@@ -494,7 +498,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             self.global_step.value(), time.ctime()))
 
         s = self.emulator.get_initial_state()
-
+        print(" In train of AE")
         s_batch = list()
         a_batch = list()
         y_batch = list()
@@ -524,6 +528,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 self.save_vars()
 
                 # Choose next action and execute it
+                print("intrinsic motivation print")
                 a, q_values = self.choose_next_action(s)
                 #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
@@ -531,8 +536,11 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 max_q = np.max(q_values)
                 prev_s = s
                 current_frame = new_s[...,-1]
-                prev_farame = prev_s[...,-1]
-                k = self.density_model[a].update2(prev_frame)
+                prev_frame = prev_s[...,-1]
+                print("This is a {}".format(a))
+                index_of_a = np.argmax(a)
+
+                k = (self.density_model[index_of_a]).update2(prev_frame)
                 #TODO add parameters
 
                 A = self.num_actions
@@ -610,7 +618,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                         states[i],
                         actions[i],
                         mixed_returns[i],
-                        i+1 == episode_length
+                        i+1 == episode_length,
                         bonuses[i])
 
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
@@ -788,7 +796,6 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
             self.global_step.value(), time.ctime()))
 
         s = self.emulator.get_initial_state()
-
         s_batch = list()
         a_batch = list()
         y_batch = list()
@@ -818,6 +825,8 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
                 # Choose next action and execute it
                 a, q_values = self.choose_next_action(s)
+                print ("Inside PseudoCountQLearner")
+
                 #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward

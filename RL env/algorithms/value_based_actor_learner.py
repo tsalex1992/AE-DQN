@@ -36,40 +36,48 @@ class ValueBasedLearner(ActorLearner):
         conf_target = conf_learning.copy()
         conf_target['name'] = 'local_target_{}'.format(self.actor_id)
 
-        conf_learning_lower = {'name': "local_learning_{}".format(self.actor_id),
+        conf_learning_lower = {'name': "local_learning_lower_{}".format(self.actor_id),
                          'input_shape': self.input_shape,
                          'num_act': self.num_actions,
                          'args': args}
         conf_target_lower = conf_learning.copy()
-        conf_target_lower['name'] = 'local_target_{}'.format(self.actor_id)
+        conf_target_lower['name'] = 'local_target_lower_{}'.format(self.actor_id)
 
-        conf_learning_upper = {'name': "local_learning_{}".format(self.actor_id),
+        conf_learning_upper = {'name': "local_learning_upper_{}".format(self.actor_id),
                          'input_shape': self.input_shape,
                          'num_act': self.num_actions,
                          'args': args}
         conf_target_upper = conf_learning.copy()
-        conf_target_upper['name'] = 'local_target_{}'.format(self.actor_id)
+        conf_target_upper['name'] = 'local_target_upper_{}'.format(self.actor_id)
 
-        # self.local_network = network_type(conf_learning)
-        # self.target_network = network_type(conf_target)
+        self.local_network = network_type(conf_learning)
+        self.target_network = network_type(conf_target)
+        if(self.alg_type == "AE"):
 
-        ### create new local and target network for lower bound
-        self.local_network_lower = network_type(conf_learning_lower)
-        self.target_network_lower = network_type(conf_target_lower)
+            ### create new local and target network for lower bound
+            self.local_network_lower = QNetwork(conf_learning_lower)
+            self.target_network_lower = QNetwork(conf_target_lower)
 
-        ### create new local and target network for upper bound
-        self.local_network_upper = network_type(conf_learning_upper)
-        self.target_network_upper = network_type(conf_target_upper)
+            ### create new local and target network for upper bound
+            self.local_network_upper = QNetwork(conf_learning_upper)
+            self.target_network_upper = QNetwork(conf_target_upper)
 
         if self.is_master():
             var_list = self.local_network.params + self.target_network.params
-            var_list_lower = self.local_network_lower + self.target_network_lower
-            var_list_upper = self.local_network_upper + self.target_network_upper
+            if(self.alg_type == "AE"):
+                var_list_lower = self.local_network_lower.params + self.target_network_lower.params
+                var_list_upper = self.local_network_upper.params + self.target_network_upper.params
 
             #TODO: check if this kind of concatination of network is valid
 
-            self.saver = tf.train.Saver(var_list=var_list+var_list_lower+var_list_upper, max_to_keep=3,
-                                        keep_checkpoint_every_n_hours=2)
+            # self.saver = tf.train.Saver(var_list=var_list+var_list_lower+var_list_upper, max_to_keep=3,
+            #                             keep_checkpoint_every_n_hours=2)
+            if(self.alg_type == "AE"):
+                self.saver = tf.train.Saver(var_list = var_list_lower+var_list_upper, max_to_keep=3,
+                                            keep_checkpoint_every_n_hours=2)
+            else:
+                    self.saver = tf.train.Saver(var_list = var_list, max_to_keep=3,
+                                            keep_checkpoint_every_n_hours=2)
 
         # Exploration epsilons
         self.initial_epsilon = 1.0
@@ -129,6 +137,7 @@ class ValueBasedLearner(ActorLearner):
             return R
 
     ### pay attention: call it for upper q
+    ### Returns minimized action pool after AE according to the paper(Q upper is larger than V lower)
     def minimize_action_pool(self, state):
         new_actions = np.zeros([self.num_actions])
         #TODO get q upperbound values
@@ -147,6 +156,8 @@ class ValueBasedLearner(ActorLearner):
 
     def choose_next_action(self, state):
         """ Epsilon greedy """
+        #print("we are in choose next action - not the good one")
+        print("{}".format(type(self).__name__))
         new_action = np.zeros([self.num_actions])
         #TODO check session run
         q_values = self.session.run(
@@ -274,6 +285,7 @@ class NStepQLearner(ValueBasedLearner):
 
                 # Choose next action and execute it
                 # readout_t is the qvalues from the state
+                print("we are inside class NStepQLearner")
                 a, readout_t = self.choose_next_action(s)
 
                 ##TODO next state and reward from action a at the current state
@@ -379,6 +391,7 @@ class OneStepSARSALearner(ValueBasedLearner):
                 y = reward
             else:
                 # Choose action that we will execute in the next step
+                print("we are in class OneStepSARSALearner")
                 a_prime, readout_t = self.choose_next_action(s_prime)
                 q_prime = readout_t[a_prime.argmax()]
                 # Q_target in the new state for the next step action

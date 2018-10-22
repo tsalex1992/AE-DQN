@@ -81,6 +81,7 @@ class ActorLearner(Process):
         # launch python -m visdom.server
         self.vis =  Visualizer(self.actor_id,self.visdom) ## default port is 8098 http://localhost:8097. actor_id
         self.alg_type = args.alg_type
+        print("self.alg.type is: {}".format(self.alg_type))
         self.use_monitor = args.use_monitor
         self.max_local_steps = args.max_local_steps
         self.optimizer_type = args.opt_type
@@ -197,6 +198,7 @@ class ActorLearner(Process):
             episode_over = False
 
             while not episode_over:
+                print("inside base class")
                 a = self.choose_next_action(s)[0]
                 s, reward, episode_over = self.emulator.next(a)
 
@@ -221,7 +223,12 @@ class ActorLearner(Process):
             self.global_step.val.value = g_step
             self.last_saving_step = g_step
             logger.debug("T{}: Initializing shared memory...".format(self.actor_id))
-            self.update_shared_memory()
+            if(self.alg_type == "AE"):
+                self.update_shared_memory_upper()
+                self.update_shared_memory_lower()
+            else:
+                self.update_shared_memory()
+
 
         # Wait until actor 0 finishes initializing shared memory
         self.barrier.wait()
@@ -287,7 +294,9 @@ class ActorLearner(Process):
 
     def update_shared_memory(self):
         # Initialize shared memory with tensorflow var values
-        params = self.session.run(self.local_network.params)
+        # params = self.session.run(self.local_network.params)
+        params = self.session.run(self.local_network_upper.params)
+        #print("params: {}".format(params))
 
         # Merge all param matrices into a single 1-D array
         params = np.hstack([p.reshape(-1) for p in params])
@@ -295,6 +304,31 @@ class ActorLearner(Process):
         # if hasattr(self, 'target_vars'):
             # target_params = self.session.run(self.target_network.params)
             # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
+
+    def update_shared_memory_upper(self):
+            # Initialize shared memory with tensorflow var values
+            # params = self.session.run(self.local_network.params)
+            params = self.session.run(self.local_network_upper.params)
+            #print("params: {}".format(params))
+
+            # Merge all param matrices into a single 1-D array
+            params = np.hstack([p.reshape(-1) for p in params])
+            np.frombuffer(self.learning_vars.vars, ctypes.c_float)[:] = params
+            # if hasattr(self, 'target_vars'):
+                # target_params = self.session.run(self.target_network.params)
+                # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
+    def update_shared_memory_lower(self):
+            # Initialize shared memory with tensorflow var values
+            # params = self.session.run(self.local_network.params)
+            params = self.session.run(self.local_network_lower.params)
+            #print("params: {}".format(params))
+
+            # Merge all param matrices into a single 1-D array
+            params = np.hstack([p.reshape(-1) for p in params])
+            np.frombuffer(self.learning_vars.vars, ctypes.c_float)[:] = params
+            # if hasattr(self, 'target_vars'):
+                # target_params = self.session.run(self.target_network.params)
+                # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
 
 
     @only_on_train(return_val=0.0)

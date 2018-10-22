@@ -34,7 +34,7 @@ class CTSDensityModel(object):
 
 		return self.exploration_bonus(log_prob, log_recoding_prob)
 
-		def update2(self, obs):
+	def update2(self, obs):
 			obs = resize(obs, self.factors.shape)
 
 			context = [0, 0, 0, 0]

@@ -89,24 +89,58 @@ def main(args):
     logger.info('logging summaries to {}'.format(args.summ_base_dir))
 
     Learner, Network = ALGORITHMS[args.alg_type]
-    network = Network({
-        'name': 'shared_vars_network',
-        'input_shape': input_shape,
-        'num_act': num_actions,
-        'args': args
-    })
+    print("Learner is: {}".format(Learner))
 
-    args.network = Network
+    if args.alg_type !='AE':
+
+
+        network = Network({
+            'name': 'shared_vars_network',
+            'input_shape': input_shape,
+            'num_act': num_actions,
+            'args': args
+        })
+        args.network = Network
+
+    else:
+
+        network_lower = Network({
+            'name': 'shared_vars_network_lower',
+            'input_shape': input_shape,
+            'num_act': num_actions,
+            'args': args
+        })
+        args.network_lower = Network
+
+        network_upper = Network({
+            'name': 'shared_vars_network_upper',
+            'input_shape': input_shape,
+            'num_act': num_actions,
+            'args': args
+        })
+        args.network_upper = Network
+
     ## initialize visdom server
     args.visdom = visdom.Visdom(port=args.display_port)
     #initialize shared variables
-    args.learning_vars = SharedVars(network.params) #size, step and optimizer
-    args.opt_state = SharedVars(
-        network.params, opt_type=args.opt_type, lr=args.initial_lr
-    ) if args.opt_mode == 'shared' else None
-    args.batch_opt_state = SharedVars(
-        network.params, opt_type=args.opt_type, lr=args.initial_lr
-    ) if args.opt_mode == 'shared' else None
+    #TODO: !!!!!! only network lower params are being use, should check out if upper is also needed !!!!!!!
+    if args.alg_type !='AE':
+        args.learning_vars = SharedVars(network.params) #size, step and optimizer
+        args.opt_state = SharedVars(
+            network.params, opt_type=args.opt_type, lr=args.initial_lr
+        ) if args.opt_mode == 'shared' else None
+        args.batch_opt_state = SharedVars(
+            network.params, opt_type=args.opt_type, lr=args.initial_lr
+        ) if args.opt_mode == 'shared' else None
+    else:
+                args.learning_vars = SharedVars(network_lower.params) #size, step and optimizer
+                args.opt_state = SharedVars(
+                    network_lower.params, opt_type=args.opt_type, lr=args.initial_lr
+                ) if args.opt_mode == 'shared' else None
+                args.batch_opt_state = SharedVars(
+                    network_lower.params, opt_type=args.opt_type, lr=args.initial_lr
+                ) if args.opt_mode == 'shared' else None
+
 
     #TODO: need to refactor so TRPO+GAE doesn't need special treatment
     if args.alg_type in ['trpo', 'trpo-continuous']:
@@ -124,10 +158,15 @@ def main(args):
         args.baseline_vars = SharedVars(baseline_network.params)
         args.vf_input_shape = vf_input_shape
 
-    if args.alg_type in ['q', 'sarsa', 'dueling', 'dqn-cts', 'AE']:
+    if args.alg_type in ['q', 'sarsa', 'dueling', 'dqn-cts']:
         args.target_vars = SharedVars(network.params)
         args.target_update_flags = SharedFlags(args.num_actor_learners)
-    if args.alg_type in ['dqn-cts', 'a3c-cts', 'a3c-lstm-cts','AE']: #TODO check density_model_update_flags
+    if args.alg_type in ['dqn-cts', 'a3c-cts', 'a3c-lstm-cts']: #TODO check density_model_update_flags
+        args.density_model_update_flags = SharedFlags(args.num_actor_learners)
+
+    if args.alg_type in ['AE']:
+        args.target_vars = SharedVars(network_lower.params)
+        args.target_update_flags = SharedFlags(args.num_actor_learners)
         args.density_model_update_flags = SharedFlags(args.num_actor_learners)
 
     tf.reset_default_graph()
