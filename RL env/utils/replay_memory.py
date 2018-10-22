@@ -14,6 +14,7 @@ class ReplayMemory(object):
 		self.screens = np.memmap(get_path('screens'), dtype=np.float32, mode='w+', shape=tuple([self.maxlen]+input_shape))
 		self.actions = np.memmap(get_path('actions'), dtype=np.float32, mode='w+', shape=(self.maxlen, action_size))
 		self.rewards = np.memmap(get_path('rewards'), dtype=np.float32, mode='w+', shape=(self.maxlen,))
+		self.bonuses = np.memmap(get_path('bonuses'), dtype=np.float32, mode='w+', shape=(self.maxlen,))
 		self.is_terminal = np.memmap(get_path('terminals'), dtype=np.bool, mode='w+', shape=(self.maxlen,))
 
 		self.position = 0
@@ -23,14 +24,14 @@ class ReplayMemory(object):
 	# 	s = list()
 	# 	for i in xrange(-3, 2):
 	# 		s.append(self.screens[batch+i])
-			
+
 	# 	return np.vstack(s[:-1]), np.vstack(s[1:])
 
 	def sample_batch(self, batch_size):
 		batch = np.zeros((batch_size,), dtype=np.int32)
 		idx = 0
 		while idx < batch_size:
-			maybe_batch = np.random.choice(len(self)-1, np.minimum(len(self), batch_size-idx))	
+			maybe_batch = np.random.choice(len(self)-1, np.minimum(len(self), batch_size-idx))
 			valid_idx = np.where(1 - self.is_terminal[maybe_batch])[0]
 			batch[idx:idx+len(valid_idx)] = maybe_batch[valid_idx]
 			idx += len(valid_idx)
@@ -40,23 +41,21 @@ class ReplayMemory(object):
 		s_f = self.screens[batch+1]
 		a = self.actions[batch]
 		r = self.rewards[batch]
+		b = self.bonuses[batch]
 		is_terminal = self.is_terminal[batch+1]
 
-		return s_i, a, r, s_f, is_terminal
+		return s_i, a, r,  s_f, is_terminal , b
 
 	def __len__(self):
 		return self.maxlen if self.full else self.position
 
-	def append(self, s_i, a, r, is_terminal):
+	def append(self, s_i, a, r, is_terminal, b):
 		self.screens[self.position] = s_i
 		self.actions[self.position] = a
 		self.rewards[self.position] = r
+		self.bonuses[self.position] = b
 		self.is_terminal[self.position] = is_terminal
 
-		if self.position + 1 == self.maxlen:	
+		if self.position + 1 == self.maxlen:
 			self.full = True
 		self.position = (self.position + 1) % self.maxlen
-
-
-
-		

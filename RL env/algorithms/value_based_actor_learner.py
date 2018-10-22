@@ -36,12 +36,39 @@ class ValueBasedLearner(ActorLearner):
         conf_target = conf_learning.copy()
         conf_target['name'] = 'local_target_{}'.format(self.actor_id)
 
-        self.local_network = network_type(conf_learning)
-        self.target_network = network_type(conf_target) ## TODO is this the global network?
+        conf_learning_lower = {'name': "local_learning_{}".format(self.actor_id),
+                         'input_shape': self.input_shape,
+                         'num_act': self.num_actions,
+                         'args': args}
+        conf_target_lower = conf_learning.copy()
+        conf_target_lower['name'] = 'local_target_{}'.format(self.actor_id)
+
+        conf_learning_upper = {'name': "local_learning_{}".format(self.actor_id),
+                         'input_shape': self.input_shape,
+                         'num_act': self.num_actions,
+                         'args': args}
+        conf_target_upper = conf_learning.copy()
+        conf_target_upper['name'] = 'local_target_{}'.format(self.actor_id)
+
+        # self.local_network = network_type(conf_learning)
+        # self.target_network = network_type(conf_target)
+
+        ### create new local and target network for lower bound
+        self.local_network_lower = network_type(conf_learning_lower)
+        self.target_network_lower = network_type(conf_target_lower)
+
+        ### create new local and target network for upper bound
+        self.local_network_upper = network_type(conf_learning_upper)
+        self.target_network_upper = network_type(conf_target_upper)
 
         if self.is_master():
             var_list = self.local_network.params + self.target_network.params
-            self.saver = tf.train.Saver(var_list=var_list, max_to_keep=3,
+            var_list_lower = self.local_network_lower + self.target_network_lower
+            var_list_upper = self.local_network_upper + self.target_network_upper
+
+            #TODO: check if this kind of concatination of network is valid
+
+            self.saver = tf.train.Saver(var_list=var_list+var_list_lower+var_list_upper, max_to_keep=3,
                                         keep_checkpoint_every_n_hours=2)
 
         # Exploration epsilons
@@ -101,15 +128,16 @@ class ValueBasedLearner(ActorLearner):
 
             return R
 
+    ### pay attention: call it for upper q
     def minimize_action_pool(self, state):
         new_actions = np.zeros([self.num_actions])
         #TODO get q upperbound values
         # q_upper
         q_values = self.session.run(
-                self.local_network.output_layer,
-                feed_dict={self.local_network.input_ph: [state]})[0]
+                self.target_network_lower.output_layer,
+                feed_dict={self.target_network_lower.input_ph: [state]})[0]
         #TODO V lower upperbound
-        Vlow = slef.Vlower(state)
+        Vlow = max(q_values)
 
         for index, action in enumerate(new_actions):
             action = q_values[index] >= Vlow

@@ -14,6 +14,7 @@ from utils.fast_cts import CTSDensityModel
 from utils.replay_memory import ReplayMemory
 from .policy_based_actor_learner import A3CLearner, A3CLSTMLearner
 from .value_based_actor_learner import ValueBasedLearner
+import math
 
 
 logger = utils.logger.getLogger('intrinsic_motivation_actor_learner')
@@ -254,7 +255,7 @@ class PseudoCountA3CLSTMLearner(A3CLSTMLearner, A3CDensityModelMixin):
         self._train()
 
         return new_action, q_values
-        
+
 class AElearner(ValueBasedLearner,DensityModelMixinAE):
     def __init__(self, args):
         self.args = args
@@ -272,22 +273,10 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self._init_density_model(args)
         #computes loss
         self._double_dqn_op()
+        self.which_net_to_update_counter = 0
 
 
 
-        def minimize_action_pool(self, state):
-            new_actions = np.zeros([self.num_actions])
-            #TODO get q upperbound values
-            # q_upper
-            q_values = self.session.run(
-                    self.local_network.output_layer,
-                    feed_dict={self.local_network.input_ph: [state]})[0]
-            #TODO V lower upperbound
-            Vlow = slef.Vlower(state)
-
-            for index, action in enumerate(new_actions):
-                action = q_values[index] >= Vlow
-            return new_actions
 
 
 
@@ -295,8 +284,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             new_action = np.zeros([self.num_actions])
             #TODO check session run
             q_values = self.session.run(
-                self.local_network.output_layer,
-                feed_dict={self.local_network.input_ph: [state]})[0]
+                self.local_network_upper.output_layer,
+                feed_dict={self.local_network_upper.input_ph: [state]})[0]
             secure_random = random.SystemRandom()
             action_pool = minimize_action_pool(state)
             random_index = secure_random.randrange(0,len(action_pool))
@@ -317,11 +306,11 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         if self.num_actor_learners == 1:
             return self.args.final_epsilon
         else:
-            return super(PseudoCountQLearner, self).generate_final_epsilon()
+            return super(AElearner, self).generate_final_epsilon()
 
 
     def _get_summary_vars(self):
-        q_vars = super(PseudoCountQLearner, self)._get_summary_vars()
+        q_vars = super(AElearner, self)._get_summary_vars()
 
         bonus_q05 = tf.Variable(0., name='novelty_bonus_q05')
         s1 = tf.summary.scalar('Novelty_Bonus_q05_{}'.format(self.actor_id), bonus_q05)
@@ -334,6 +323,12 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         s4 = tf.summary.scalar('Augmented_Episode_Reward_{}'.format(self.actor_id), augmented_reward)
 
         return q_vars + [bonus_q05, bonus_q50, bonus_q95, augmented_reward]
+
+    def beta_func(self, A,S,delta,k,Vmax,c):
+        left = math.sqrt(k*math.log(c*k*k*S*A/delta))
+        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta))
+        beta = k*Vmax*(left-(1-1/k)*right)
+        return beta
 
 
     #TODO: refactor to make this cleaner
@@ -370,9 +365,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 total_episode_reward,
                 episode_ave_max_q,
                 self.epsilon,
-                np.percentile(bonuses, 5),
-                np.percentile(bonuses, 50),
-                np.percentile(bonuses, 95),
+                # np.percentile(bonuses, 5),
+                # np.percentile(bonuses, 50),
+                # np.percentile(bonuses, 95),
                 total_augmented_reward,
             )
 
@@ -393,24 +388,43 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
 
     def _double_dqn_op(self):
-        q_local_action = tf.cast(tf.argmax(
-            self.local_network.output_layer, axis=1), tf.int32)
-        q_target_max = utils.ops.slice_2d(
-            self.target_network.output_layer,
+        q_local_action_lower = tf.cast(tf.argmax(
+            self.local_network_lower.output_layer, axis=1), tf.int32)
+        q_target_max_lower = utils.ops.slice_2d(
+            self.target_network_lower.output_layer,
             tf.range(0, self.batch_size),
-            q_local_action,
+            q_local_action_lower,
         )
+
+        q_local_action_upper = tf.cast(tf.argmax(
+            self.local_network_upper.output_layer, axis=1), tf.int32)
+        q_target_max_upper = utils.ops.slice_2d(
+            self.target_network_upper.output_layer,
+            tf.range(0, self.batch_size),
+            q_local_action_upper,
+        )
+
         self.one_step_reward = tf.placeholder(tf.float32, self.batch_size, name='one_step_reward')
         self.is_terminal = tf.placeholder(tf.bool, self.batch_size, name='is_terminal')
 
-        self.y_target = self.one_step_reward + self.cts_eta*self.gamma*q_target_max \
+        self.y_target_lower = self.one_step_reward + self.cts_eta*self.gamma*q_target_max_lower \
             * (1 - tf.cast(self.is_terminal, tf.float32))
 
-        self.double_dqn_loss = self.local_network._value_function_loss(
-            self.local_network.q_selected_action
-            - tf.stop_gradient(self.y_target))
+        self.y_target_upper = self.one_step_reward + self.cts_eta*self.gamma*q_target_max_upper \
+            * (1 - tf.cast(self.is_terminal, tf.float32))
 
-        self.double_dqn_grads = tf.gradients(self.double_dqn_loss, self.local_network.params)
+        self.double_dqn_loss_lower = self.local_network_lower._value_function_loss(
+            self.local_network_lower.q_selected_action
+            - tf.stop_gradient(self.y_target_lower))
+
+        self.double_dqn_loss_upper = self.local_network_upper._value_function_loss(
+            self.local_network_upper.q_selected_action
+            - tf.stop_gradient(self.y_target_upper))
+
+
+        self.double_dqn_grads_lower = tf.gradients(self.double_dqn_loss_lower, self.local_network_lower.params)
+        self.double_dqn_grads_upper = tf.gradients(self.double_dqn_loss_upper, self.local_network_upper.params)
+
 
 
     # def batch_update(self):
@@ -433,25 +447,45 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
     def batch_update(self):
         if len(self.replay_memory) < self.replay_memory.maxlen//10:
             return
+        #TODO check if we need two replay memories
+        s_i, a_i, r_i, s_f, is_terminal ,b_i = self.replay_memory.sample_batch(self.batch_size)
 
-        s_i, a_i, r_i, s_f, is_terminal = self.replay_memory.sample_batch(self.batch_size)
+        # if(self.which_net_to_update_counter %2):
 
         feed_dict={
-            self.local_network.input_ph: s_f,
-            self.target_network.input_ph: s_f,
+            self.local_network_upper.input_ph: s_f,
+            self.target_network_upper.input_ph: s_f,
             self.is_terminal: is_terminal,
-            self.one_step_reward: r_i,
+            self.one_step_reward: r_i+b_i,
         }
-        y_target = self.session.run(self.y_target, feed_dict=feed_dict)
+        y_target_upper = self.session.run(self.y_target_upper, feed_dict=feed_dict)
 
         feed_dict={
-            self.local_network.input_ph: s_i,
-            self.local_network.target_ph: y_target,
-            self.local_network.selected_action_ph: a_i
+            self.local_network_upper.input_ph: s_i,
+            self.local_network_upper.target_ph: y_target_upper,
+            self.local_network_upper.selected_action_ph: a_i
         }
-        grads = self.session.run(self.local_network.get_gradients,
-                                 feed_dict=feed_dict)
+        grads = self.session.run(self.local_network_upper.get_gradients,
+                                     feed_dict=feed_dict)
         self.apply_gradients_to_shared_memory_vars(grads)
+        # else:
+        feed_dict={
+            self.local_network_lower.input_ph: s_f,
+            self.target_network_lower.input_ph: s_f,
+            self.is_terminal: is_terminal,
+            self.one_step_reward: r_i-b_i,
+        }
+        y_target_lower = self.session.run(self.y_target_lower, feed_dict=feed_dict)
+
+        feed_dict={
+            self.local_network_lower.input_ph: s_i,
+            self.local_network_lower.target_ph: y_target_lower,
+            self.local_network_lower.selected_action_ph: a_i
+        }
+        grads = self.session.run(self.local_network_lower.get_gradients,
+                                    feed_dict=feed_dict)
+        self.apply_gradients_to_shared_memory_vars(grads)
+
 
 
     def train(self):
@@ -477,6 +511,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             states =       list()
             actions =      list()
             max_q_values = list()
+            bonuses = list()
             local_step_start = self.local_step
             total_episode_reward = 0
             total_augmented_reward = 0
@@ -497,16 +532,28 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 prev_s = s
                 current_frame = new_s[...,-1]
                 prev_farame = prev_s[...,-1]
-                bonus = self.density_model[a].update2(prev_frame)
+                k = self.density_model[a].update2(prev_frame)
+                #TODO add parameters
+
+                A = self.num_actions
+                S = 10000000
+                delta = self.ae_delta
+                Vmax = 10000
+                c = 5
+
+
+                bonus =  beta_func( A,S,delta,k,Vmax,c)
+
 
                 # Rescale or clip immediate reward
-                reward = self.rescale_reward(self.rescale_reward(reward) )
+                reward = self.rescale_reward(self.rescale_reward(reward))
                 total_augmented_reward += reward
                 ep_t += 1
 
                 rewards.append(reward)
                 states.append(s)
                 actions.append(a)
+                bonuses.append(bonus)
                 max_q_values.append(max_q)
 
                 s = new_s
@@ -533,14 +580,15 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
                 if self.local_step % self.q_update_interval == 0:
                     self.batch_update()
+                    self.which_net_to_update_counter += 1
 
                 if self.is_master() and (self.local_step % 500 == 0):
-                    bonus_array = np.array(bonuses)
+                    #bonus_array = np.array(bonuses)
                     steps = global_step - global_steps_at_last_record
                     global_steps_at_last_record = global_step
 
-                    logger.debug('Mean Bonus={:.4f} / Max Bonus={:.4f} / STEPS/s={}'.format(
-                        bonus_array.mean(), bonus_array.max(), steps/float(time.time()-t0)))
+                    # logger.debug('Mean Bonus={:.4f} / Max Bonus={:.4f} / STEPS/s={}'.format(
+                    # #    bonus_array.mean(), bonus_array.max(), steps/float(time.time()-t0)))
                     t0 = time.time()
 
 
@@ -562,7 +610,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                         states[i],
                         actions[i],
                         mixed_returns[i],
-                        i+1 == episode_length)
+                        i+1 == episode_length
+                        bonuses[i])
 
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
                 self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
