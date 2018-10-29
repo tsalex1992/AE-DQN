@@ -265,6 +265,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         super(AElearner, self).__init__(args)
         self.cts_eta = args.cts_eta
         self.cts_beta = args.cts_beta
+        self.ae_delta = args.ae_delta
         self.batch_size = args.batch_update_size
         self.replay_memory = ReplayMemory(
             args.replay_size,
@@ -278,33 +279,59 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self._double_dqn_op()
         self.which_net_to_update_counter = 0
         print("In AE class")
+    ### Supposedly initializes the q uper and lower output values for each state and action
+    def init_q_values(self,A,S,delta,Vmax,c):
+        print ("The output layer is: {}".format(type(self.target_network_upper.output_layer)))
+
+
+
+    ### pay attention: call it for upper q
+    ### Returns minimized action pool after AE according to the paper(Q upper is larger than V lower)
+    def minimize_action_pool(self, state):
+        new_actions = np.zeros([self.num_actions])
+        #TODO get q upperbound values
+        # q_upper
+        q_values_upper = self.session.run(
+                self.target_network_upper.output_layer,
+                feed_dict={self.target_network_upper.input_ph: [state]})[0]
+        q_values_lower = self.session.run(
+                self.target_network_lower.output_layer,
+                feed_dict={self.target_network_lower.input_ph: [state]})[0]
+        #TODO V lower upperbound
+        Vlow = max(q_values_lower)
+        print("The value of Vlow is {}".format(Vlow))
+        for index, action in enumerate(new_actions):
+            action = q_values_upper[index] >= Vlow
+            print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
+        return new_actions
 
 
 
 
 
-        def choose_next_action(self, state):
-            print("we use our AE new algorithm choose next action")
-            new_action = np.zeros([self.num_actions])
-            #TODO check session run
-            q_values = self.session.run(
-                self.local_network_upper.output_layer,
-                feed_dict={self.local_network_upper.input_ph: [state]})[0]
-            secure_random = random.SystemRandom()
-            action_pool = minimize_action_pool(state)
-            random_index = secure_random.randrange(0,len(action_pool))
-            indexes_valid_actions=[]
-            for i, item in enumerate(action_pool):
-                if item == 1 :
-                    indexes_valid_actions.append(i)
+    def choose_next_action(self, state):
+        print("we use our AE new algorithm choose next action")
+        new_action = np.zeros([self.num_actions])
+        #TODO check session run
+        q_values = self.session.run(
+            self.local_network_upper.output_layer,
+            feed_dict={self.local_network_upper.input_ph: [state]})[0]
+        secure_random = random.SystemRandom()
+        action_pool = self.minimize_action_pool(state)
+        print("The action pool {}".format(action_pool))
+        random_index = secure_random.randrange(0,len(action_pool))
+        indexes_valid_actions=[]
+        for i, item in enumerate(action_pool):
+            if item == 1 :
+                indexes_valid_actions.append(i)
 
 
+        print(indexes_valid_actions)
+        random_index = secure_random.choice(indexes_valid_actions)
 
-            random_index = secure_random.choice(indexes_valid_actions)
-
-            new_action[random_index] = 1
-            self.reduce_thread_epsilon()
-            return new_action,q_values
+        new_action[random_index] = 1
+        self.reduce_thread_epsilon()
+        return new_action,q_values
 
     def generate_final_epsilon(self):
         if self.num_actor_learners == 1:
@@ -521,15 +548,28 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             total_augmented_reward = 0
             episode_ave_max_q = 0
             ep_t = 0
+            action_count = 0
 
             while not episode_over:
+
+                A = self.num_actions
+                S = 10000000
+                delta = self.ae_delta
+                Vmax = 10000
+                c = 5
                 # Sync local learning net with shared mem
                 self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
                 self.save_vars()
 
                 # Choose next action and execute it
                 print("intrinsic motivation print")
-                a, q_values = self.choose_next_action(s)
+                #TODO we need an init for the first iteration of
+                # qupper and qlower values
+                if action_count == 0 :
+                    self.init_q_values(A,S,delta,Vmax,c)
+                else:
+                    a, q_values = self.choose_next_action(s)
+                action_count+= 1
                 #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward
@@ -539,18 +579,15 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 prev_frame = prev_s[...,-1]
                 print("This is a {}".format(a))
                 index_of_a = np.argmax(a)
-
-                k = (self.density_model[index_of_a]).update2(prev_frame)
+                ## TODO change back to update 2 and understand the underlying
+                ## cython code
+                k = (self.density_model[index_of_a]).update(prev_frame)
                 #TODO add parameters
 
-                A = self.num_actions
-                S = 10000000
-                delta = self.ae_delta
-                Vmax = 10000
-                c = 5
 
 
-                bonus =  beta_func( A,S,delta,k,Vmax,c)
+
+                bonus =  beta_func(A,S,delta,k,Vmax,c)
 
 
                 # Rescale or clip immediate reward
