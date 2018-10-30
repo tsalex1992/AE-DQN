@@ -279,11 +279,16 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self._double_dqn_op()
         self.which_net_to_update_counter = 0
         print("In AE class")
-    ### Supposedly initializes the q uper and lower output values for each state and action
-    def init_q_values(self,A,S,delta,Vmax,c):
-        print ("The output layer is: {}".format(type(self.target_network_upper.output_layer)))
 
 
+
+    def beta_function(self, A,S,delta,k,Vmax,c):
+        left = math.sqrt(k*math.log(c*k*k*S*A/delta))
+        temp = (c*(k-1)*(k-1)*S*A/delta)
+        print("This is temp {}".format(temp))
+        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta))
+        beta = k*Vmax*(left-(1-1/k)*right)
+        return beta
 
     ### pay attention: call it for upper q
     ### Returns minimized action pool after AE according to the paper(Q upper is larger than V lower)
@@ -301,7 +306,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         Vlow = max(q_values_lower)
         print("The value of Vlow is {}".format(Vlow))
         for index, action in enumerate(new_actions):
-            action = q_values_upper[index] >= Vlow
+            new_actions[index] = q_values_upper[index] >= Vlow
             print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
         return new_actions
 
@@ -355,11 +360,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
         return q_vars + [bonus_q05, bonus_q50, bonus_q95, augmented_reward]
 
-    def beta_func(self, A,S,delta,k,Vmax,c):
-        left = math.sqrt(k*math.log(c*k*k*S*A/delta))
-        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta))
-        beta = k*Vmax*(left-(1-1/k)*right)
-        return beta
+
 
 
     #TODO: refactor to make this cleaner
@@ -565,10 +566,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 print("intrinsic motivation print")
                 #TODO we need an init for the first iteration of
                 # qupper and qlower values
-                if action_count == 0 :
-                    self.init_q_values(A,S,delta,Vmax,c)
-                else:
-                    a, q_values = self.choose_next_action(s)
+
+                a, q_values = self.choose_next_action(s)
                 action_count+= 1
                 #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
@@ -586,8 +585,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
 
 
-
-                bonus =  beta_func(A,S,delta,k,Vmax,c)
+                ## TODO, need to fix the k and put it instead of 1
+                #bonus =  self.beta_function(A,S,delta,1,Vmax,c)
+                bonus = 0.001
 
 
                 # Rescale or clip immediate reward

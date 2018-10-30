@@ -10,7 +10,7 @@ class Network(object):
 
     def __init__(self, conf):
         '''
-        Initialize hyper-parameters, set up optimizer and network 
+        Initialize hyper-parameters, set up optimizer and network
         layers common across Q and Policy/V nets
         '''
         self.name = conf['name']
@@ -50,6 +50,7 @@ class Network(object):
 
     def _build_encoder(self):
         with tf.variable_scope(self.name):
+
             if self.arch == 'FC':
                 layer_i = layers.flatten(self.input_ph)
                 for i, layer_size in enumerate(self.fc_layer_sizes):
@@ -61,7 +62,7 @@ class Network(object):
                 self.w3, self.b3, self.o3 = layers.fc('fc3', layers.flatten(self.o2), 20, activation=self.activation)
                 self.ox = self.o3
             elif self.arch == 'NIPS':
-                self.w1, self.b1, self.o1 = layers.conv2d('conv1', self.input_ph, 16, 8, self.input_channels, 4, activation=self.activation)
+                self.w1, self.b1, self.o1 = layers.conv2d('conv1', self.input_ph, 16, 8, self.input_channels, 4, activation=self.activation )
                 self.w2, self.b2, self.o2 = layers.conv2d('conv2', self.o1, 32, 4, 16, 2, activation=self.activation)
                 self.w3, self.b3, self.o3 = layers.fc('fc3', layers.flatten(self.o2), 256, activation=self.activation)
                 self.ox = self.o3
@@ -78,7 +79,7 @@ class Network(object):
                 with tf.variable_scope('lstm_layer') as vs:
                     self.lstm_cell = tf.contrib.rnn.BasicLSTMCell(
                         self.hidden_state_size, state_is_tuple=True, forget_bias=1.0)
-                    
+
                     batch_size = tf.shape(self.step_size)[0]
                     self.ox_reshaped = tf.reshape(self.ox,
                         [batch_size, -1, self.ox.get_shape().as_list()[-1]])
@@ -96,7 +97,7 @@ class Network(object):
                     self.ox = tf.reshape(self.lstm_outputs, [-1,self.hidden_state_size], name='reshaped_lstm_outputs')
 
                     # Get all LSTM trainable params
-                    self.lstm_trainable_variables = [v for v in 
+                    self.lstm_trainable_variables = [v for v in
                         tf.trainable_variables() if v.name.startswith(vs.name)]
 
             return self.ox
@@ -129,11 +130,11 @@ class Network(object):
         # Placeholders for shared memory vars
         self.params_ph = []
         for p in self.params:
-            self.params_ph.append(tf.placeholder(tf.float32, 
-                shape=p.get_shape(), 
+            self.params_ph.append(tf.placeholder(tf.float32,
+                shape=p.get_shape(),
                 name="shared_memory_for_{}".format(
                     (p.name.split("/", 1)[1]).replace(":", "_"))))
-            
+
         # Ops to sync net with shared memory vars
         self.sync_with_shared_memory = []
         for i in range(len(self.params)):
@@ -152,4 +153,3 @@ class Network(object):
 
     def get_input_shape(self):
         return self.input_ph.get_shape().as_list()[1:]
-        

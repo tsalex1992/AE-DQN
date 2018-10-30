@@ -136,21 +136,8 @@ class ValueBasedLearner(ActorLearner):
 
             return R
 
-    ### pay attention: call it for upper q
-    ### Returns minimized action pool after AE according to the paper(Q upper is larger than V lower)
-    def minimize_action_pool(self, state):
-        new_actions = np.zeros([self.num_actions])
-        #TODO get q upperbound values
-        # q_upper
-        q_values = self.session.run(
-                self.target_network_lower.output_layer,
-                feed_dict={self.target_network_lower.input_ph: [state]})[0]
-        #TODO V lower upperbound
-        Vlow = max(q_values)
 
-        for index, action in enumerate(new_actions):
-            action = q_values[index] >= Vlow
-        return new_actions
+
 
 
 

@@ -27,49 +27,68 @@ def selu(x, name):
     scale = 1.0507009873554804934193349852946
     return scale*tf.where(x>0.0, x, alpha*tf.exp(x)-alpha)
 
-def conv2d(name, _input, filters, size, channels, stride, activation='relu', padding='VALID', data_format='NHWC'):
+def conv2d(name, _input, filters, size, channels, stride, activation='relu', padding='VALID', data_format='NHWC',ae=''):
     if data_format == 'NHWC':
         strides = [1, stride, stride, 1]
     else:
         strides = [1, 1, stride, stride]
 
-    w = conv_weight_variable([size, size, channels, filters], name+'_weights')
+    w = conv_weight_variable([size, size, channels, filters], name+'_weights',ae)
     b = conv_bias_variable([filters], name+'_biases')
     conv = tf.nn.conv2d(_input, w, strides=strides,
             padding=padding, data_format=data_format, name=name+'_convs') + b
 
     out = apply_activation(conv, name, activation)
     return w, b, out
-
-def conv_weight_variable(shape, name):
+## TODO: distinguish between initializers for AE and otherwise
+## TODO: distinguish the initializer for lower and upper Q net
+def conv_weight_variable(shape, name, ae = ''):
     # initializer=tf.contrib.layers.xavier_initializer()
     # initializer = tf.truncated_normal_initializer(0, 0.02)
     d = 1.0 / np.sqrt(np.prod(shape[:-1]))
     initializer = tf.random_uniform_initializer(-d, d)
+    # if ae == 'UpperQ' :
+    #         initializer = tf.random_uniform_initializer(0, d)
+    # if ae == 'LowerQ':
+    #         initializer = tf.random_uniform_initializer(-d, 0)
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
 def conv_bias_variable(shape, name):
     initializer = tf.zeros_initializer()
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
-def fc(name, _input, output_dim, activation='relu'):
+def fc(name, _input, output_dim, activation='relu', ae= ''):
     input_dim = _input.get_shape().as_list()[1]
-    w = fc_weight_variable([input_dim, output_dim], name+'_weights')
-    b = fc_bias_variable([output_dim], input_dim, name+'_biases')
+    w = fc_weight_variable([input_dim, output_dim], name+'_weights',ae)
+    b = fc_bias_variable([output_dim], input_dim, name+'_biases',ae)
     out = tf.matmul(_input, w) + b
 
     out = apply_activation(out, name, activation)
     return w, b, out
 
-def fc_weight_variable(shape, name):
+def fc_weight_variable(shape, name, ae=''):
     # initializer = tf.contrib.layers.xavier_initializer()
     # initializer = tf.random_normal_initializer(stddev=0.02)
     d = 1.0 / np.sqrt(shape[0])
+
     initializer = tf.random_uniform_initializer(-d, d)
+    if ae == 'UpperQ' :
+            initializer = tf.zeros_initializer()
+            print("Upper Q for fc weights")
+    if ae == 'LowerQ':
+            initializer = tf.zeros_initializer()
+            print("Lower Q for fc weights")
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
-def fc_bias_variable(shape, input_channels, name):
+def fc_bias_variable(shape, input_channels, name, ae = ''):
+    d = 1.0 / np.sqrt(shape[0])
     initializer = tf.zeros_initializer()
+    if ae == 'UpperQ' :
+            initializer = tf.random_uniform_initializer(0, d)
+            print("Upper Q for fc bias")
+    if ae == 'LowerQ':
+            initializer = tf.random_uniform_initializer(-d, 0)
+            print("Lower Q for fc bias")
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
 def softmax(name, _input, output_dim):
@@ -77,7 +96,7 @@ def softmax(name, _input, output_dim):
     w = fc_weight_variable([input_dim, output_dim], name+'_weights')
     b = fc_bias_variable([output_dim], input_dim, name+'_biases')
     out = tf.nn.softmax(tf.add(tf.matmul(_input, w), b), name=name+'_policy')
- 
+
     return w, b, out
 
 def softmax_and_log_softmax(name, _input, output_dim):

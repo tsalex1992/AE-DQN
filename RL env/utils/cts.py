@@ -77,6 +77,7 @@ class Estimator(object):
         self.count_total += 1.0
         return log_prob
 
+
     def sample(self, rejection_sampling):
         """Samples this estimator's PDF in linear time."""
         if rejection_sampling:
