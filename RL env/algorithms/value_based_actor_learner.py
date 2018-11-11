@@ -23,7 +23,12 @@ class ValueBasedLearner(ActorLearner):
         super(ValueBasedLearner, self).__init__(args)
 
         # Shared mem vars
-        self.target_vars = args.target_vars
+        if self.alg_type != "AE":
+            self.target_vars = args.target_vars
+        else:
+            self.target_vars_lower = args.target_vars_lower
+            self.target_vars_upper = args.target_vars_upper
+
         self.target_update_flags = args.target_update_flags
         self.q_target_update_steps = args.q_target_update_steps
 
@@ -55,12 +60,12 @@ class ValueBasedLearner(ActorLearner):
         if(self.alg_type == "AE"):
 
             ### create new local and target network for lower bound
-            self.local_network_lower = QNetwork(conf_learning_lower)
-            self.target_network_lower = QNetwork(conf_target_lower)
+            self.local_network_lower = QNetwork(conf_learning_lower,self.actor_id)
+            self.target_network_lower = QNetwork(conf_target_lower,self.actor_id)
 
             ### create new local and target network for upper bound
-            self.local_network_upper = QNetwork(conf_learning_upper)
-            self.target_network_upper = QNetwork(conf_target_upper)
+            self.local_network_upper = QNetwork(conf_learning_upper,self.actor_id)
+            self.target_network_upper = QNetwork(conf_target_upper,self.actor_id)
 
         if self.is_master():
             var_list = self.local_network.params + self.target_network.params

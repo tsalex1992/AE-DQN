@@ -314,6 +314,7 @@ class ARA3CLearner(BaseA3CLearner):
                     == self.max_local_steps)):
 
                 # Choose next action and execute it
+                print("Sequence decode choose action")
                 a, readout_v_t, readout_pi_t, action_repeat = self.choose_next_action(s)
 
                 if self.is_master() and (self.local_step % 100 == 0):

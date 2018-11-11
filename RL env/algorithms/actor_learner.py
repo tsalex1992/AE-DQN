@@ -98,15 +98,25 @@ class ActorLearner(Process):
         self.random_seed = args.random_seed
 
         # Shared mem vars
-        self.learning_vars = args.learning_vars
+        if self.alg_type != "AE":
+            self.learning_vars = args.learning_vars
+        else:
+            self.learning_vars_lower = args.learning_vars_lower
+            self.learning_vars_upper = args.learning_vars_upper
 
         if self.optimizer_mode == 'local':
-            if self.optimizer_type == 'rmsprop':
-                self.opt_st = np.ones(self.learning_vars.size, dtype=ctypes.c_float)
+            if self.alg_type != "AE":
+                if self.optimizer_type == 'rmsprop':
+                    self.opt_st = np.ones(self.learning_vars.size, dtype=ctypes.c_float)
+                else:
+                    self.opt_st = np.zeros(self.learning_vars.size, dtype=ctypes.c_float)
             else:
-                self.opt_st = np.zeros(self.learning_vars.size, dtype=ctypes.c_float)
+                if self.optimizer_type == 'rmsprop':
+                    self.opt_st = np.ones(self.learning_vars_lower.size, dtype=ctypes.c_float)
+                else:
+                    self.opt_st = np.zeros(self.learning_vars_lower.size, dtype=ctypes.c_float)
         elif self.optimizer_mode == 'shared':
-                self.opt_st = args.opt_state
+                self.opt_st = args.opt_state_lower
 
         # rmsprop/momentum
         self.alpha = args.momentum
@@ -234,12 +244,23 @@ class ActorLearner(Process):
         self.barrier.wait()
 
         if not self.is_master():
-            logger.debug("T{}: Syncing with shared memory...".format(self.actor_id))
-            self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
-            if hasattr(self, 'target_network'):
-                self.sync_net_with_shared_memory(self.target_network, self.learning_vars)
-            elif hasattr(self, 'batch_network'):
-                self.sync_net_with_shared_memory(self.batch_network, self.learning_vars)
+            if(self.alg_type != "AE"):
+                logger.debug("T{}: Syncing with shared memory...".format(self.actor_id))
+                self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
+                if hasattr(self, 'target_network'):
+                    self.sync_net_with_shared_memory(self.target_network, self.learning_vars)
+                elif hasattr(self, 'batch_network'):
+                    self.sync_net_with_shared_memory(self.batch_network, self.learning_vars)
+            else:
+                logger.debug("T{}: Syncing with shared memory...".format(self.actor_id))
+                self.sync_net_with_shared_memory(self.local_network_lower, self.learning_vars_lower)
+                self.sync_net_with_shared_memory(self.local_network_upper, self.learning_vars_upper)
+                if hasattr(self, 'target_network'):
+                    self.sync_net_with_shared_memory(self.target_network_lower, self.learning_vars_lower)
+                    self.sync_net_with_shared_memory(self.target_network_upper, self.learning_vars_upper)
+                #TODO: understand what is the batch_network and if needed to by duplicated for lower and upper
+                elif hasattr(self, 'batch_network'):
+                    self.sync_net_with_shared_memory(self.batch_network, self.learning_vars)
 
         # Ensure we don't add any more nodes to the graph
         self.session.graph.finalize()
@@ -295,7 +316,7 @@ class ActorLearner(Process):
     def update_shared_memory(self):
         # Initialize shared memory with tensorflow var values
         # params = self.session.run(self.local_network.params)
-        params = self.session.run(self.local_network_upper.params)
+        params = self.session.run(self.local_network.params)
         #print("params: {}".format(params))
 
         # Merge all param matrices into a single 1-D array
@@ -313,7 +334,7 @@ class ActorLearner(Process):
 
             # Merge all param matrices into a single 1-D array
             params = np.hstack([p.reshape(-1) for p in params])
-            np.frombuffer(self.learning_vars.vars, ctypes.c_float)[:] = params
+            np.frombuffer(self.learning_vars_upper.vars, ctypes.c_float)[:] = params
             # if hasattr(self, 'target_vars'):
                 # target_params = self.session.run(self.target_network.params)
                 # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
@@ -325,7 +346,7 @@ class ActorLearner(Process):
 
             # Merge all param matrices into a single 1-D array
             params = np.hstack([p.reshape(-1) for p in params])
-            np.frombuffer(self.learning_vars.vars, ctypes.c_float)[:] = params
+            np.frombuffer(self.learning_vars_lower.vars, ctypes.c_float)[:] = params
             # if hasattr(self, 'target_vars'):
                 # target_params = self.session.run(self.target_network.params)
                 # np.frombuffer(self.target_vars.vars, ctypes.c_float)[:] = params
@@ -451,8 +472,9 @@ class ActorLearner(Process):
 
     def setup_summaries(self):
         summary_vars = self._get_summary_vars()
-
-        summary_placeholders = [tf.placeholder(tf.float32) for _ in range(len(summary_vars))]
+        summary_placeholders = [tf.placeholder(tf.float32, name='p_' + str(x[0]))
+            for x in enumerate(range(len(summary_vars)))]
+        print("These are summary_ph {}".format(summary_placeholders))
         update_ops = [summary_vars[i].assign(summary_placeholders[i]) for i in range(len(summary_vars))]
         with tf.control_dependencies(update_ops):
             summary_ops = tf.summary.merge_all()
@@ -464,7 +486,10 @@ class ActorLearner(Process):
     def log_summary(self, *args):
         if self.is_master():
             feed_dict = {ph: val for ph, val in zip(self.summary_ph, args)}
-            summaries = self.session.run(self.update_ops + [self.summary_op], feed_dict=feed_dict)[-1]
+            print(len(list(feed_dict.keys())))
+            print(len(list(args)))
+            summaries = self.session.run(self.update_ops + [self.summary_op],
+            feed_dict=feed_dict)[-1]
             self.supervisor.summary_computed(self.session, summaries, global_step=self.global_step.value())
 
 

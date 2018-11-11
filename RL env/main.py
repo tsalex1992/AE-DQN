@@ -133,12 +133,20 @@ def main(args):
             network.params, opt_type=args.opt_type, lr=args.initial_lr
         ) if args.opt_mode == 'shared' else None
     else:
-                args.learning_vars = SharedVars(network_lower.params) #size, step and optimizer
-                args.opt_state = SharedVars(
+                #args.learning_vars = SharedVars(network_lower.params) #size, step and optimizer
+                args.learning_vars_lower = SharedVars(network_lower.params) #size, step and optimizer
+                args.learning_vars_upper = SharedVars(network_upper.params) #size, step and optimizer
+                args.opt_state_lower = SharedVars(
                     network_lower.params, opt_type=args.opt_type, lr=args.initial_lr
+                )
+                args.opt_state_upper = SharedVars(
+                    network_upper.params, opt_type=args.opt_type, lr=args.initial_lr
                 ) if args.opt_mode == 'shared' else None
-                args.batch_opt_state = SharedVars(
+                args.batch_opt_state_lower = SharedVars(
                     network_lower.params, opt_type=args.opt_type, lr=args.initial_lr
+                )
+                args.batch_opt_state_uppper = SharedVars(
+                    network_upper.params, opt_type=args.opt_type, lr=args.initial_lr
                 ) if args.opt_mode == 'shared' else None
 
 
@@ -165,7 +173,9 @@ def main(args):
         args.density_model_update_flags = SharedFlags(args.num_actor_learners)
 
     if args.alg_type in ['AE']:
-        args.target_vars = SharedVars(network_lower.params)
+        print("we are in main args.alg_type in [AE]")
+        args.target_vars_lower = SharedVars(network_lower.params)
+        args.target_vars_upper = SharedVars(network_upper.params)
         args.target_update_flags = SharedFlags(args.num_actor_learners)
         args.density_model_update_flags = SharedFlags(args.num_actor_learners)
 

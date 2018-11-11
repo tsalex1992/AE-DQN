@@ -71,6 +71,7 @@ class CEMLearner(BaseA3CLearner):
 				episode_over = False
 
 				while not episode_over:
+					print("Inside CEM learner")
 					a, pi = self.choose_next_action(s)
 					s, reward, episode_over = self.emulator.next(a)
 					total_episode_reward += reward
@@ -106,11 +107,6 @@ class CEMLearner(BaseA3CLearner):
 						total_episode_reward += reward
 
 					episode_rewards.append(total_episode_reward)
-				
+
 				logger.info('Average Test Reward: {}'.format(np.array(episode_rewards).mean()))
 				return
-
-
-
-
-		

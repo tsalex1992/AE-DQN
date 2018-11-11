@@ -114,6 +114,7 @@ class DensityModelMixinAE(object):
         """
         def _init_density_model(self, args):
             self.density_model_update_steps = 20*args.q_target_update_steps
+            #self.density_model_update_flags = args.density_model_update_flags
             self.density_model_update_flags = []
             for x in range(0, args.num_actions):
                 self.density_model_update_flags.append(args.density_model_update_flags)
@@ -278,15 +279,25 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #computes loss
         self._double_dqn_op()
         self.which_net_to_update_counter = 0
-        print("In AE class")
+        # print("In AE class")
 
 
 
     def beta_function(self, A,S,delta,k,Vmax,c):
         left = math.sqrt(k*math.log(c*k*k*S*A/delta))
         temp = (c*(k-1)*(k-1)*S*A/delta)
-        print("This is temp {}".format(temp))
-        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta))
+        # print("This is temp {}".format(temp))
+        # print("c is : {}".format(c))
+        # print("k is : {}".format(k))
+        # print("S is : {}".format(S))
+        # print("A is : {}".format(A))
+        # print("delta is : {}".format(delta))
+        # print("c*(k-1)*(k-1)*S*A is : {}".format(c*(k-1)*(k-1)*S*A))
+        # print("c*(k-1)*(k-1)*S*A/delta is : {}".format(c*(k-1)*(k-1)*S*A/delta))
+        # print("math.log(c*(k-1)*(k-1)*S*A/delta is : {}".format(math.log(c*(k-1)*(k-1)*S*A/delta)))
+
+
+        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta)) #the error is here
         beta = k*Vmax*(left-(1-1/k)*right)
         return beta
 
@@ -304,10 +315,10 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 feed_dict={self.target_network_lower.input_ph: [state]})[0]
         #TODO V lower upperbound
         Vlow = max(q_values_lower)
-        print("The value of Vlow is {}".format(Vlow))
+        # print("The value of Vlow is {}".format(Vlow))
         for index, action in enumerate(new_actions):
             new_actions[index] = q_values_upper[index] >= Vlow
-            print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
+            # print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
         return new_actions
 
 
@@ -315,15 +326,14 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
 
     def choose_next_action(self, state):
-        print("we use our AE new algorithm choose next action")
+        # print("we use our AE new algorithm choose next action")
         new_action = np.zeros([self.num_actions])
-        #TODO check session run
         q_values = self.session.run(
             self.local_network_upper.output_layer,
             feed_dict={self.local_network_upper.input_ph: [state]})[0]
         secure_random = random.SystemRandom()
         action_pool = self.minimize_action_pool(state)
-        print("The action pool {}".format(action_pool))
+        # print("The action pool {}".format(action_pool))
         random_index = secure_random.randrange(0,len(action_pool))
         indexes_valid_actions=[]
         for i, item in enumerate(action_pool):
@@ -331,7 +341,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 indexes_valid_actions.append(i)
 
 
-        print(indexes_valid_actions)
+        # print(indexes_valid_actions)
         random_index = secure_random.choice(indexes_valid_actions)
 
         new_action[random_index] = 1
@@ -388,8 +398,10 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 max(self.scores),
             ))
             self.vis.plot_current_errors(T,total_episode_reward)
-            self.wr.writerow(T)
-            self.wr.writerow(total_episode_reward)
+            #self.wr.writerow(T)
+            #self.wr.writerow(total_episode_reward)
+            print(" total episode reward type {}".format(type(total_episode_reward)))
+            print(" T type {}".format(type(T)))
             #print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
 
 
@@ -397,9 +409,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 total_episode_reward,
                 episode_ave_max_q,
                 self.epsilon,
-                # np.percentile(bonuses, 5),
-                # np.percentile(bonuses, 50),
-                # np.percentile(bonuses, 95),
+                np.percentile(bonuses, 5),
+                np.percentile(bonuses, 50),
+                np.percentile(bonuses, 95),
                 total_augmented_reward,
             )
 
@@ -526,7 +538,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             self.global_step.value(), time.ctime()))
 
         s = self.emulator.get_initial_state()
-        print(" In train of AE")
+        # print(" In train of AE")
         s_batch = list()
         a_batch = list()
         y_batch = list()
@@ -559,35 +571,36 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 Vmax = 10000
                 c = 5
                 # Sync local learning net with shared mem
-                self.sync_net_with_shared_memory(self.local_network, self.learning_vars)
+                #TODO: upper / lower
+                self.sync_net_with_shared_memory(self.local_network_lower, self.learning_vars_lower)
+                self.sync_net_with_shared_memory(self.local_network_upper, self.learning_vars_upper)
                 self.save_vars()
 
                 # Choose next action and execute it
-                print("intrinsic motivation print")
-                #TODO we need an init for the first iteration of
-                # qupper and qlower values
+                # print("intrinsic motivation print")
+
 
                 a, q_values = self.choose_next_action(s)
                 action_count+= 1
-                #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward
                 max_q = np.max(q_values)
                 prev_s = s
                 current_frame = new_s[...,-1]
                 prev_frame = prev_s[...,-1]
-                print("This is a {}".format(a))
+                #print("This is a {}".format(a))
                 index_of_a = np.argmax(a)
                 ## TODO change back to update 2 and understand the underlying
                 ## cython code
                 k = (self.density_model[index_of_a]).update(prev_frame)
-                #TODO add parameters
+                # print("K value is {}".format(k))
+                #You should trace the update call here, as I recall it leads to the c funtion in a c file
+                # And not to the python function
 
+                ## TODO: change S to the correct number (numebr of states until now or what is supposed to be double by k)
+                k = k * S
 
-
-                ## TODO, need to fix the k and put it instead of 1
-                #bonus =  self.beta_function(A,S,delta,1,Vmax,c)
-                bonus = 0.001
+                bonus =  self.beta_function(A,S,delta,k,Vmax,c)
 
 
                 # Rescale or clip immediate reward
@@ -616,12 +629,16 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
                 # Sync local tensorflow target network params with shared target network params
                 if self.target_update_flags.updated[self.actor_id] == 1:
-                    self.sync_net_with_shared_memory(self.target_network, self.target_vars)
+                    self.sync_net_with_shared_memory(self.target_network_lower, self.target_vars_lower)
+                    self.sync_net_with_shared_memory(self.target_network_upper, self.target_vars_upper)
+                    #TODO: check if needed to duplicate target_update_flags for both nets
                     self.target_update_flags.updated[self.actor_id] = 0
-                if self.density_model_update_flags.updated[self.actor_id] == 1:
-                    #returns the index of the chosen action
-                    self.read_density_model(np.argmax(a))
-                    self.density_model_update_flags.updated[self.actor_id] = 0
+                #print("type of self.density_model_updated: {}".format(type(self.density_model_update_flags)))
+                for action in range(len(self.density_model_update_flags)):
+                    if self.density_model_update_flags[action].updated[self.actor_id] == 1:
+                        #returns the index of the chosen action
+                        self.read_density_model(np.argmax(a))
+                        self.density_model_update_flags[action].updated[self.actor_id] = 0
 
                 if self.local_step % self.q_update_interval == 0:
                     self.batch_update()
@@ -736,6 +753,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
             self.vis.plot_current_errors(T,total_episode_reward)
             self.wr.writerow(T)
             self.wr.writerow(total_episode_reward)
+
             #print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
 
 

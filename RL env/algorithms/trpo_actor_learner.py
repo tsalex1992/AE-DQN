@@ -16,7 +16,7 @@ logger = utils.logger.getLogger('trpo_actor_learner')
 
 class TRPOLearner(BaseA3CLearner):
 	'''
-	Implementation of Trust Region Policy Optimization + Generalized Advantage Estimation 
+	Implementation of Trust Region Policy Optimization + Generalized Advantage Estimation
 	as described in https://arxiv.org/pdf/1506.02438.pdf
 
 	∂'π = F^-1 ∂π where F is the Fischer Information Matrix
@@ -171,7 +171,7 @@ class TRPOLearner(BaseA3CLearner):
 		accept_ratio = .1
 		backtrack_ratio = .7
 		max_backtracks = 15
-    
+
 		fval = self.run_minibatches(data, self.policy_loss)
 
 		for (_n_backtracks, stepfrac) in enumerate(backtrack_ratio**np.arange(max_backtracks)):
@@ -209,7 +209,7 @@ class TRPOLearner(BaseA3CLearner):
 				self.value_network.critic_target_ph: target[batch_idx]
 			}
 			output_i = self.session.run(self.value_network.get_gradients, feed_dict=feed_dict)
-			
+
 			for i, g in enumerate(output_i):
 				grads[i] += g * (end-start)/float(data_size)
 
@@ -284,9 +284,10 @@ class TRPOLearner(BaseA3CLearner):
 			episode_over = False
 			accumulated_rewards = list()
 			while not episode_over and len(accumulated_rewards) < self.max_rollout:
+				print("Inside pto learner")
 				a, pi = self.choose_next_action(s)
 				new_s, reward, episode_over = self.emulator.next(a)
-				
+
 				accumulated_rewards.append(reward)
 
 				data['state'].append(s)
@@ -310,7 +311,7 @@ class TRPOLearner(BaseA3CLearner):
 				self.actor_id, episode_reward))
 
 			self.experience_queue.put((data, episode_reward))
-			
+
 
 	def _run_master(self):
 		for epoch in range(self.num_epochs):
@@ -342,7 +343,7 @@ class TRPOLearner(BaseA3CLearner):
 				worker_data['advantage'] = advantages
 				for key, value in list(worker_data.items()):
 					data[key].extend(value)
-					
+
 			t1 = time.time()
 			kl = self.update_grads({
 				k: np.array(v) for k, v in list(data.items())})
@@ -361,5 +362,3 @@ class TRPOLearner(BaseA3CLearner):
 				self.task_queue.put('EXIT')
 		else:
 			self._run_worker()
-
-
