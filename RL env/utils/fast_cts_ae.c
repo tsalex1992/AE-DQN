@@ -1289,7 +1289,6 @@ struct __pyx_obj_5utils_8fast_cts_CTSDensityModel {
   unsigned int height;
   unsigned int width;
   float beta;
-  string alg_type;
   struct __pyx_t_5utils_8fast_cts_CTSStruct **cts_factors;
 };
 

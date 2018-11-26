@@ -82,8 +82,8 @@ cdef estimator_set_state(EstimatorStruct* ptr, state):
     cdef unsigned int i
     for i in range(ptr[0].alphabet_size):
         ptr[0].counts[i] = state[2][i]
-        
-            
+
+
 cdef struct CTSNodeStruct:
     double _log_stay_prob
     double _log_split_prob
@@ -96,7 +96,7 @@ cdef CTSNodeStruct* make_cts_node(CTSStruct* model):
     node[0]._children = NULL
     node[0].estimator = make_estimator(model)
     node[0]._model = model
-    
+
     node[0]._log_stay_prob = LOG_PRIOR_STAY_PROB
     node[0]._log_split_prob = LOG_PRIOR_SPLIT_PROB
 
@@ -128,7 +128,7 @@ cdef double node_update(CTSNodeStruct* node, int[:] context, int symbol):
 cdef double node_log_prob(CTSNodeStruct* node, int[:] context, int symbol):
     cdef double lp_estimator = log(estimator_prob(node[0].estimator, symbol))
     cdef CTSNodeStruct* child
-    
+
     if context.shape[0] > 0:
         child = node_get_child(node, context[context.shape[0]-1])
         lp_child = node_log_prob(child, context[:context.shape[0]-1], symbol)
@@ -198,7 +198,7 @@ cdef node_set_state(CTSNodeStruct* ptr, state):
             node_set_state(&ptr[0]._children[i], child_states[i])
 
 
-cdef struct CTSStruct:    
+cdef struct CTSStruct:
     double _time
     unsigned int context_length
     unsigned int alphabet_size
@@ -212,12 +212,12 @@ cdef CTSStruct* make_cts(int context_length, int max_alphabet_size=256,
     cdef CTSStruct* cts = <CTSStruct*>PyMem_Malloc(sizeof(CTSStruct))
     # Total number of symbols processed.
     cts[0]._time = 0.0
-    cts[0].context_length = context_length        
+    cts[0].context_length = context_length
     cts[0].alphabet_size = max_alphabet_size
 
     # These are properly set when we call update().
     cts[0].log_alpha, cts[0].log_1_minus_alpha = 0.0, 0.0
-    cts[0].symbol_prior = get_prior(symbol_prior, cts[0].alphabet_size) 
+    cts[0].symbol_prior = get_prior(symbol_prior, cts[0].alphabet_size)
 
     # Create root. This must happen after setting alphabet & symbol prior.
     cts[0]._root = make_cts_node(cts)
@@ -251,16 +251,16 @@ cdef cts_set_state(CTSStruct* ptr, state):
 
 cdef class CTS:
     cdef CTSStruct* inner
-    
+
     def __init__(self, context_length, alphabet_size):
         self.inner = make_cts(context_length, alphabet_size)
-        
+
     cpdef double update(self, int[:] context, int symbol):
         return cts_update(self.inner, context, symbol)
-        
+
     cpdef double log_prob(self, int[:] context, int symbol):
         return cts_log_prob(self.inner, context, symbol)
-        
+
 
 cdef class CTSDensityModel:
     cdef unsigned int num_bins
@@ -274,25 +274,36 @@ cdef class CTSDensityModel:
         self.width = width
         self.beta = beta
         self.num_bins = num_bins
-        
+
+
         self.cts_factors = <CTSStruct**>PyMem_Malloc(sizeof(CTSStruct*)*height)
         cdef int i, j
         for i in range(self.height):
             self.cts_factors[i] = <CTSStruct*>PyMem_Malloc(sizeof(CTSStruct)*width)
             for j in range(self.width):
                 self.cts_factors[i][j] = make_cts(4, max_alphabet_size=num_bins)[0]
-                
+
     def __dealloc__(self):
         pass
 
 
     def update(self, obs):
+        print("Fast cts")
         obs = resize(obs, (self.height, self.width), preserve_range=True)
         obs = np.floor((obs*self.num_bins)).astype(np.int32)
-        
+
         log_prob, log_recoding_prob = self._update(obs)
-        return self.exploration_bonus(log_prob, log_recoding_prob)
-    
+        return self.ret_pseudocounts(log_prob, log_recoding_prob)
+        #FIXME this is the real implementation
+        #return self.exploration_bonus(log_prob, log_recoding_prob)
+
+    def ret_pseudocounts(self,log_prob,log_recoding_prob):
+    			prob = np.exp(log_prob)
+    			recoding_prob = np.exp(log_recoding_prob)
+
+    			pseudocount = prob * (1 - recoding_prob) / np.maximum(recoding_prob - prob, 1e-10)
+    			return pseudocoun
+
     cpdef (double, double) _update(self, int[:, :] obs):
         cdef int[:] context = np.array([0, 0, 0, 0], np.int32)
         cdef double log_prob = 0.0
@@ -332,4 +343,3 @@ cdef class CTSDensityModel:
 
 
 __all__ = ["CTS", "CTSDensityModel"]
-

@@ -11,6 +11,8 @@ from utils import checkpoint_utils
 from .actor_learner import ONE_LIFE_GAMES
 from utils.decorators import Experimental
 from utils.fast_cts import CTSDensityModel
+#from utils.fast_cts_ae import CTSDensityModel
+#from utils.cts_density_model import CTSDensityModel
 from utils.replay_memory import ReplayMemory
 from .policy_based_actor_learner import A3CLearner, A3CLSTMLearner
 from .value_based_actor_learner import ValueBasedLearner
@@ -114,20 +116,21 @@ class DensityModelMixinAE(object):
         """
         def _init_density_model(self, args):
             self.density_model_update_steps = 20*args.q_target_update_steps
+            self.alg_type = args.alg_type;
             #self.density_model_update_flags = args.density_model_update_flags
             self.density_model_update_flags = []
             for x in range(0, args.num_actions):
                 self.density_model_update_flags.append(args.density_model_update_flags)
-                print("x is: {}".format(x))
+                #print("x is: {}".format(x))
 
             model_args = {
                 'height': args.cts_rescale_dim,
                 'width': args.cts_rescale_dim,
-                'num_bins': args.cts_bins,
-                'beta': args.cts_beta
+                'num_bins': args.cts_bins, #TODO check what this is
+                'beta': args.cts_beta,
             }
             self.density_model = []
-            for x in range (0,args.num_actions):
+            for x in range(0, args.num_actions):
                 if args.density_model == 'cts':
                     self.density_model.append(CTSDensityModel(**model_args))
                 else:
@@ -136,6 +139,7 @@ class DensityModelMixinAE(object):
 
         def write_density_model(self , index):
             logger.info('T{} Writing Pickled Density  Model of action{} to File...'.format(self.actor_id,index))
+            #print(" Our dict : {}".format(self.density_model[index].__dict__))
             raw_data = pickle.dumps(self.density_model[index].get_state(), protocol=2)
             with self.barrier.counter.lock, open('/tmp/density_model'+str(index)+'.pkl', 'wb') as f:
                 f.write(raw_data)
@@ -279,25 +283,36 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #computes loss
         self._double_dqn_op()
         self.which_net_to_update_counter = 0
+        self.ae_counter = 0
+        self.epsilon_greedy_counter = 0
+        self.total_ae_counter = 0
+        self.total_epsilon_greedy_counter = 0
         # print("In AE class")
 
 
 
     def beta_function(self, A,S,delta,k,Vmax,c):
-        left = math.sqrt(k*math.log(c*k*k*S*A/delta))
-        temp = (c*(k-1)*(k-1)*S*A/delta)
-        # print("This is temp {}".format(temp))
+        #print("This is temp {}".format(temp))
+        if k < 1:
+            k = 1
         # print("c is : {}".format(c))
-        # print("k is : {}".format(k))
+        #print("k is : {}".format(k))
         # print("S is : {}".format(S))
         # print("A is : {}".format(A))
         # print("delta is : {}".format(delta))
         # print("c*(k-1)*(k-1)*S*A is : {}".format(c*(k-1)*(k-1)*S*A))
-        # print("c*(k-1)*(k-1)*S*A/delta is : {}".format(c*(k-1)*(k-1)*S*A/delta))
+        #print("c*(k1)*(k1)*S*A/delta is : {}".format(c*(k)*(k)*S*A/delta))
         # print("math.log(c*(k-1)*(k-1)*S*A/delta is : {}".format(math.log(c*(k-1)*(k-1)*S*A/delta)))
+        #k = math.maximum(k,1)
+        left = math.sqrt(k*math.log(c*k*k*S*A/delta))
+        temp = (c*(k-1)*(k-1)*S*A/delta)
 
 
-        right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta)) #the error is here
+        if k == 1:
+            right =0;
+        else:
+            right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta)) #the error is here
+
         beta = k*Vmax*(left-(1-1/k)*right)
         return beta
 
@@ -341,11 +356,18 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 indexes_valid_actions.append(i)
 
 
-        # print(indexes_valid_actions)
+        #There are no actions after elimination
+        #Using epsilon greedy from all the actions
+        if not indexes_valid_actions:
+            self.epsilon_greedy_counter += 1
+
+            return super(AElearner,self).choose_next_action(state)
+        self.ae_counter += 1
         random_index = secure_random.choice(indexes_valid_actions)
 
         new_action[random_index] = 1
         self.reduce_thread_epsilon()
+        #print("succefuly eliminated actions")
         return new_action,q_values
 
     def generate_final_epsilon(self):
@@ -388,7 +410,14 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             self.scores.insert(0, total_episode_reward)
             if len(self.scores) > 100:
                 self.scores.pop()
-
+            print ("Used AE for {} times".format(self.ae_counter))
+            print ("Used Epsilon greedy for {} times".format(self.epsilon_greedy_counter))
+            self.total_ae_counter += self.ae_counter
+            self.total_epsilon_greedy_counter += self.epsilon_greedy_counter
+            self.ae_counter = 0
+            self.epsilon_greedy_counter = 0
+            print("Total count of use of AE is {} :".format(self.total_ae_counter))
+            print("Total count of use of Epsilone Greedy {}".format(self.total_epsilon_greedy_counter))
             logger.info('T{0} / STEP {1} / REWARD {2} / {3} / {4}'.format(
                 self.actor_id, T, total_episode_reward, s1, s2))
             logger.info('ID: {0} -- RUNNING AVG: {1:.0f} +- {2:.0f} -- BEST: {3:.0f}'.format(
@@ -397,11 +426,12 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 2*np.array(self.scores).std(),
                 max(self.scores),
             ))
+            #print(" T type {}".format(type(T)))
             self.vis.plot_current_errors(T,total_episode_reward)
-            #self.wr.writerow(T)
-            #self.wr.writerow(total_episode_reward)
-            print(" total episode reward type {}".format(type(total_episode_reward)))
-            print(" T type {}".format(type(T)))
+            self.wr.writerow([T])
+            self.wr.writerow([total_episode_reward])
+            #print(" total episode reward type {}".format(type(total_episode_reward)))
+
             #print ('[%s]' % ', '.join(map(str, t.vis.plot_data['X'])))
 
 
@@ -566,9 +596,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             while not episode_over:
 
                 A = self.num_actions
-                S = 10000000
+                S = 10000000000000000000
                 delta = self.ae_delta
-                Vmax = 10000
+                Vmax = 100000
                 c = 5
                 # Sync local learning net with shared mem
                 #TODO: upper / lower
@@ -598,7 +628,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 # And not to the python function
 
                 ## TODO: change S to the correct number (numebr of states until now or what is supposed to be double by k)
-                k = k * S
+                # k = k * S
 
                 bonus =  self.beta_function(A,S,delta,k,Vmax,c)
 
@@ -880,7 +910,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
                 # Choose next action and execute it
                 a, q_values = self.choose_next_action(s)
-                print ("Inside PseudoCountQLearner")
+                #print ("Inside PseudoCountQLearner")
 
                 #TODO here is the update of the iteration
                 new_s, reward, episode_over = self.emulator.next(a)
