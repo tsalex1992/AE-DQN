@@ -149,7 +149,7 @@ class ValueBasedLearner(ActorLearner):
     def choose_next_action(self, state):
         """ Epsilon greedy """
         #print("we are in choose next action - not the good one")
-        print("{}".format(type(self).__name__))
+        #print("{}".format(type(self).__name__))
         new_action = np.zeros([self.num_actions])
         #TODO check session run
         q_values = self.session.run(
@@ -193,8 +193,15 @@ class ValueBasedLearner(ActorLearner):
 
 
     def update_target(self):
-        copy(np.frombuffer(self.target_vars.vars, ctypes.c_float),
-              np.frombuffer(self.learning_vars.vars, ctypes.c_float))
+        if self.alg_type != "AE":
+            copy(np.frombuffer(self.target_vars.vars, ctypes.c_float),
+                  np.frombuffer(self.learning_vars.vars, ctypes.c_float))
+        else:
+            copy(np.frombuffer(self.target_vars_lower.vars, ctypes.c_float),
+                  np.frombuffer(self.learning_vars_lower.vars, ctypes.c_float))
+
+            copy(np.frombuffer(self.target_vars_upper.vars, ctypes.c_float),
+                  np.frombuffer(self.learning_vars_upper.vars, ctypes.c_float))
 
         # Set shared flags
         for i in range(len(self.target_update_flags.updated)):

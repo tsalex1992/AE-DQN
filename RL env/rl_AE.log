@@ -1,0 +1,61 @@
+[2018-12-04 22:28:04] INFO [MainThread:89] logging summaries to /tmp/summary_logs/Pong-v0/12.04/22.28
+[2018-12-04 22:28:06] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:298: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-12-04 22:28:07] INFO [MainThread:116] Running local_init_op.
+[2018-12-04 22:28:07] INFO [MainThread:116] Done running local_init_op.
+[2018-12-04 22:28:07] INFO [MainThread:116] Starting standard services.
+[2018-12-04 22:28:07] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/12.04/22.28/model.ckpt
+[2018-12-04 22:28:07] INFO [MainThread:116] Starting queue runners.
+[2018-12-04 22:28:24] INFO [MainThread:459] T0 / STEP 6930 / REWARD -19.0 / Q_MAX nan / EPS 0.9988
+[2018-12-04 22:28:24] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -19 +- 0 -- BEST: -19
+[2018-12-04 22:28:24] INFO [MainThread:116] Error reported to Coordinator: <class 'NameError'>, name 'q_values_upper' is not defined
+[2018-12-04 22:28:24] INFO [MainThread:238] All training threads finished!
+[2018-12-04 22:28:24] INFO [MainThread:239] Use seed=1561112489 to reproduce
+[2018-12-04 22:33:09] INFO [MainThread:89] logging summaries to /tmp/summary_logs/Pong-v0/12.04/22.33
+[2018-12-04 22:33:11] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:298: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-12-04 22:33:12] INFO [MainThread:116] Running local_init_op.
+[2018-12-04 22:33:12] INFO [MainThread:116] Done running local_init_op.
+[2018-12-04 22:33:12] INFO [MainThread:116] Starting standard services.
+[2018-12-04 22:33:12] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/12.04/22.33/model.ckpt
+[2018-12-04 22:33:12] INFO [MainThread:116] Starting queue runners.
+[2018-12-04 22:33:25] INFO [MainThread:459] T0 / STEP 5510 / REWARD -20.0 / Q_MAX nan / EPS 0.9990
+[2018-12-04 22:33:25] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -20 +- 0 -- BEST: -20
+[2018-12-04 22:33:25] INFO [MainThread:116] Error reported to Coordinator: <class 'NameError'>, name 'q_values_upper' is not defined
+[2018-12-04 22:33:25] INFO [MainThread:238] All training threads finished!
+[2018-12-04 22:33:25] INFO [MainThread:239] Use seed=2383712013 to reproduce
+[2018-12-04 22:36:02] INFO [MainThread:89] logging summaries to /tmp/summary_logs/Pong-v0/12.04/22.36
+[2018-12-04 22:36:04] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:298: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+[2018-12-04 22:36:04] INFO [MainThread:116] Running local_init_op.
+[2018-12-04 22:36:05] INFO [MainThread:116] Done running local_init_op.
+[2018-12-04 22:36:05] INFO [MainThread:116] Starting standard services.
+[2018-12-04 22:36:05] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/12.04/22.36/model.ckpt
+[2018-12-04 22:36:05] INFO [MainThread:116] Starting queue runners.
+[2018-12-04 22:36:23] INFO [MainThread:459] T0 / STEP 7160 / REWARD -18.0 / Q_MAX nan / EPS 0.9987
+[2018-12-04 22:36:23] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -18 +- 0 -- BEST: -18
+[2018-12-04 22:36:23] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:36:48] INFO [MainThread:459] T0 / STEP 13605 / REWARD -20.0 / Q_MAX nan / EPS 0.9976
+[2018-12-04 22:36:48] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -19 +- 2 -- BEST: -18
+[2018-12-04 22:36:48] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:37:13] INFO [MainThread:459] T0 / STEP 20050 / REWARD -19.0 / Q_MAX nan / EPS 0.9964
+[2018-12-04 22:37:13] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -19 +- 2 -- BEST: -18
+[2018-12-04 22:37:13] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:37:37] INFO [MainThread:459] T0 / STEP 26350 / REWARD -21.0 / Q_MAX nan / EPS 0.9953
+[2018-12-04 22:37:37] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -20 +- 2 -- BEST: -18
+[2018-12-04 22:37:37] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:38:00] INFO [MainThread:459] T0 / STEP 32405 / REWARD -21.0 / Q_MAX nan / EPS 0.9942
+[2018-12-04 22:38:00] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -20 +- 2 -- BEST: -18
+[2018-12-04 22:38:00] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:38:25] INFO [MainThread:459] T0 / STEP 38720 / REWARD -21.0 / Q_MAX nan / EPS 0.9930
+[2018-12-04 22:38:25] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -20 +- 2 -- BEST: -18
+[2018-12-04 22:38:25] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:38:51] INFO [MainThread:459] T0 / STEP 45665 / REWARD -20.0 / Q_MAX nan / EPS 0.9918
+[2018-12-04 22:38:51] INFO [MainThread:464] ID: 0 -- RUNNING AVG: -20 +- 2 -- BEST: -18
+[2018-12-04 22:38:51] INFO [MainThread:466] q_values_lower: [-0.00034051 -0.00051666 -0.00047249] / q_values_upper: [5.3212495e-04 5.7602697e-04 6.8944515e-05]
+[2018-12-04 22:39:08] INFO [MainThread:116] Error reported to Coordinator: <class 'ValueError'>, not enough values to unpack (expected 4, got 2)
+[2018-12-04 22:39:08] INFO [MainThread:238] All training threads finished!
+[2018-12-04 22:39:08] INFO [MainThread:239] Use seed=2619391717 to reproduce

@@ -81,7 +81,7 @@ class ActorLearner(Process):
         # launch python -m visdom.server
         self.vis =  Visualizer(self.actor_id,self.visdom) ## default port is 8098 http://localhost:8097. actor_id
         self.alg_type = args.alg_type
-        print("self.alg.type is: {}".format(self.alg_type))
+        #print("self.alg.type is: {}".format(self.alg_type))
         self.use_monitor = args.use_monitor
         self.max_local_steps = args.max_local_steps
         self.optimizer_type = args.opt_type
@@ -166,10 +166,13 @@ class ActorLearner(Process):
         self.summary_ph, self.update_ops, self.summary_ops = self.setup_summaries()
         self.summary_op = tf.summary.merge_all()
         # open log file each agent
-        with open(str(self.filename), 'w') as file_name:
-
-            self.wr = csv.writer(file_name, quoting=csv.QUOTE_ALL)
-            print("in actor learner file, self.wr type is {}".format(type(self.wr)))
+        #with open(str(self.filename), 'w') as file_name:
+        file_name = open(str(self.filename), 'w')
+        file_name.seek(0)
+        file_name.truncate()
+        self.opened_log_file = file_name
+        self.wr = csv.writer(file_name, quoting=csv.QUOTE_ALL)
+        #print("in actor learner file, self.wr type is {}".format(type(self.wr)))
         #print ("Created actor learner")
 
     ### calculates the future reward from each state to the destination ###
@@ -208,7 +211,7 @@ class ActorLearner(Process):
             episode_over = False
 
             while not episode_over:
-                print("inside base class")
+                #print("inside base class")
                 a = self.choose_next_action(s)[0]
                 s, reward, episode_over = self.emulator.next(a)
 
@@ -360,7 +363,10 @@ class ActorLearner(Process):
             return 0.0
 
     def apply_gradients_to_shared_memory_vars(self, grads):
-        self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars)
+        if self.alg_type != "AE":
+            self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars)
+        else: #TODO: check if also upper needed
+            self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars_lower)
 
 
     @only_on_train()
@@ -474,7 +480,7 @@ class ActorLearner(Process):
         summary_vars = self._get_summary_vars()
         summary_placeholders = [tf.placeholder(tf.float32, name='p_' + str(x[0]))
             for x in enumerate(range(len(summary_vars)))]
-        print("These are summary_ph {}".format(summary_placeholders))
+        #print("These are summary_ph {}".format(summary_placeholders))
         update_ops = [summary_vars[i].assign(summary_placeholders[i]) for i in range(len(summary_vars))]
         with tf.control_dependencies(update_ops):
             summary_ops = tf.summary.merge_all()
@@ -486,8 +492,8 @@ class ActorLearner(Process):
     def log_summary(self, *args):
         if self.is_master():
             feed_dict = {ph: val for ph, val in zip(self.summary_ph, args)}
-            print(len(list(feed_dict.keys())))
-            print(len(list(args)))
+            #print(len(list(feed_dict.keys())))
+            #print(len(list(args)))
             summaries = self.session.run(self.update_ops + [self.summary_op],
             feed_dict=feed_dict)[-1]
             self.supervisor.summary_computed(self.session, summaries, global_step=self.global_step.value())

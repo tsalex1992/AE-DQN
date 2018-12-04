@@ -69,26 +69,33 @@ def fc(name, _input, output_dim, activation='relu', ae= ''):
 def fc_weight_variable(shape, name, ae=''):
     # initializer = tf.contrib.layers.xavier_initializer()
     # initializer = tf.random_normal_initializer(stddev=0.02)
-    d = 1.0 / np.sqrt(shape[0])
+    d = 10000000000000000000000000000.0 / np.sqrt(shape[0])
+    #d = d * d
 
     initializer = tf.random_uniform_initializer(-d, d)
     if ae == 'UpperQ' :
             initializer = tf.zeros_initializer()
-            print("Upper Q for fc weights")
+            #print("Upper Q for fc weights")
     if ae == 'LowerQ':
             initializer = tf.zeros_initializer()
-            print("Lower Q for fc weights")
+            #print("Lower Q for fc weights")
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
 def fc_bias_variable(shape, input_channels, name, ae = ''):
-    d = 1.0 / np.sqrt(shape[0])
+    d = 0.001 / np.sqrt(shape[0])
+    #d = d * d
     initializer = tf.zeros_initializer()
     if ae == 'UpperQ' :
-            initializer = tf.random_uniform_initializer(0, d)
-            print("Upper Q for fc bias")
+             initializer = tf.random_uniform_initializer(0, d)
+            # print("initializer type: {}".format(initializer))
+            # while True:
+            #     pass
+
+            #print("Upper Q for fc bias")
     if ae == 'LowerQ':
             initializer = tf.random_uniform_initializer(-d, 0)
-            print("Lower Q for fc bias")
+
+            #print("Lower Q for fc bias")
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
 def softmax(name, _input, output_dim):

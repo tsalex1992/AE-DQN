@@ -1,0 +1,40 @@
+[2018-11-11 19:30:23] INFO [MainThread:89] logging summaries to /tmp/summary_logs/Pong-v0/11.11/19.30
+[2018-11-11 19:30:25] WARNING [MainThread:126] From /home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py:295: Supervisor.__init__ (from tensorflow.python.training.supervisor) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please switch to tf.train.MonitoredTrainingSession
+2018-11-11 19:30:26.142670: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2018-11-11 19:30:26.210113: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:898] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-11-11 19:30:26.210581: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties: 
+name: GeForce GTX TITAN X major: 5 minor: 2 memoryClockRate(GHz): 1.076
+pciBusID: 0000:01:00.0
+totalMemory: 11.92GiB freeMemory: 10.87GiB
+2018-11-11 19:30:26.210606: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-11-11 19:30:26.385444: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-11-11 19:30:26.385497: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-11-11 19:30:26.385506: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-11-11 19:30:26.385748: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10524 MB memory) -> physical GPU (device: 0, name: GeForce GTX TITAN X, pci bus id: 0000:01:00.0, compute capability: 5.2)
+[2018-11-11 19:30:26] INFO [MainThread:116] Running local_init_op.
+[2018-11-11 19:30:26] INFO [MainThread:116] Done running local_init_op.
+[2018-11-11 19:30:27] INFO [MainThread:116] Starting standard services.
+[2018-11-11 19:30:27] INFO [Thread-2:116] Saving checkpoint to path /tmp/summary_logs/Pong-v0/11.11/19.30/model.ckpt
+[2018-11-11 19:30:27] INFO [MainThread:116] Starting queue runners.
+/home/alexnir/tf-gpu/lib/python3.5/site-packages/skimage/transform/_warps.py:84: UserWarning: The default mode, 'constant', will be changed to 'reflect' in skimage 0.15.
+  warn("The default mode, 'constant', will be changed to 'reflect' in "
+/home/alexnir/Documents/AEDQN/RL env/algorithms/intrinsic_motivation_actor_learner.py:596: RuntimeWarning: overflow encountered in exp
+  k = (self.density_model[index_of_a]).update(prev_frame)
+[2018-11-11 19:30:41] INFO [MainThread:393] T0 / STEP 5875 / REWARD -21.0 / Q_MAX 0.0019 / EPS 0.9989
+[2018-11-11 19:30:41] INFO [MainThread:398] ID: 0 -- RUNNING AVG: -21 +- 0 -- BEST: -21
+[2018-11-11 19:30:41] INFO [MainThread:116] Error reported to Coordinator: <class 'ValueError'>, I/O operation on closed file.
+Process AElearner-1:
+Traceback (most recent call last):
+  File "/usr/lib/python3.5/multiprocessing/process.py", line 249, in _bootstrap
+    self.run()
+  File "/home/alexnir/Documents/AEDQN/RL env/algorithms/actor_learner.py", line 306, in run
+    self.train()
+  File "/home/alexnir/Documents/AEDQN/RL env/algorithms/intrinsic_motivation_actor_learner.py", line 680, in train
+    self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
+  File "/home/alexnir/Documents/AEDQN/RL env/algorithms/intrinsic_motivation_actor_learner.py", line 402, in prepare_state
+    self.wr.writerow([T])
+ValueError: I/O operation on closed file.
+[2018-11-11 19:30:41] INFO [MainThread:238] All training threads finished!
+[2018-11-11 19:30:41] INFO [MainThread:239] Use seed=4238739065 to reproduce

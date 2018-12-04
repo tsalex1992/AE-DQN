@@ -28,7 +28,7 @@ LOGGING = {
             'level': LOG_LEVEL,
             'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
-            'filename': 'rl.log',
+            'filename': 'rl_AE.log',
             'maxBytes': 10*10**6,
             'backupCount': 3
             }

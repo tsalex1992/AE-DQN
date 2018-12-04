@@ -71,7 +71,7 @@ class CEMLearner(BaseA3CLearner):
 				episode_over = False
 
 				while not episode_over:
-					print("Inside CEM learner")
+					#print("Inside CEM learner")
 					a, pi = self.choose_next_action(s)
 					s, reward, episode_over = self.emulator.next(a)
 					total_episode_reward += reward

@@ -89,7 +89,7 @@ def main(args):
     logger.info('logging summaries to {}'.format(args.summ_base_dir))
 
     Learner, Network = ALGORITHMS[args.alg_type]
-    print("Learner is: {}".format(Learner))
+    #print("Learner is: {}".format(Learner))
 
     if args.alg_type !='AE':
 
@@ -121,7 +121,7 @@ def main(args):
         args.network_upper = Network
 
     ## initialize visdom server
-    args.visdom = visdom.Visdom(port=args.display_port)
+    args.visdom = visdom.Visdom(port=args.display_port, env='AE DQN')
     #initialize shared variables
     #TODO: !!!!!! only network lower params are being use, should check out if upper is also needed !!!!!!!
     if args.alg_type !='AE':
@@ -173,7 +173,7 @@ def main(args):
         args.density_model_update_flags = SharedFlags(args.num_actor_learners)
 
     if args.alg_type in ['AE']:
-        print("we are in main args.alg_type in [AE]")
+        #print("we are in main args.alg_type in [AE]")
         args.target_vars_lower = SharedVars(network_lower.params)
         args.target_vars_upper = SharedVars(network_upper.params)
         args.target_update_flags = SharedFlags(args.num_actor_learners)

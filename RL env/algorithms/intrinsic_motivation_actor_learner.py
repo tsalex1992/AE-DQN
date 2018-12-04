@@ -264,6 +264,7 @@ class PseudoCountA3CLSTMLearner(A3CLSTMLearner, A3CDensityModelMixin):
         return new_action, q_values
 
 class AElearner(ValueBasedLearner,DensityModelMixinAE):
+
     def __init__(self, args):
         self.args = args
 
@@ -287,6 +288,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self.epsilon_greedy_counter = 0
         self.total_ae_counter = 0
         self.total_epsilon_greedy_counter = 0
+        self.q_values_upper_max = []
+        self.q_values_lower_max = []
+        self.ae_valid_actions = True
         # print("In AE class")
 
 
@@ -330,24 +334,49 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 feed_dict={self.target_network_lower.input_ph: [state]})[0]
         #TODO V lower upperbound
         Vlow = max(q_values_lower)
+        Vhigh = max(q_values_upper)
+        #print("q_values_lower: {} / q_values_upper: {}".format(q_values_lower, q_values_upper))
+
+
         # print("The value of Vlow is {}".format(Vlow))
         for index, action in enumerate(new_actions):
             new_actions[index] = q_values_upper[index] >= Vlow
             # print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
-        return new_actions
+        #print("new actions are:  {}".format(new_actions))
+        #print("new actions array: {}".format(new_actions))
+        return new_actions, q_values_lower, q_values_upper
 
 
 
 
 
     def choose_next_action(self, state):
-        # print("we use our AE new algorithm choose next action")
+        #print("we use our AE new algorithm choose next action")
         new_action = np.zeros([self.num_actions])
         q_values = self.session.run(
             self.local_network_upper.output_layer,
             feed_dict={self.local_network_upper.input_ph: [state]})[0]
+        # q_values_upper = self.session.run(
+        #         self.target_network_upper.output_layer,
+        #         feed_dict={self.target_network_upper.input_ph: [state]})[0]
+        # q_values_lower = self.session.run(
+        #         self.target_network_lower.output_layer,
+        #         feed_dict={self.target_network_lower.input_ph: [state]})[0]
+        # Vlow = max(q_values_lower)
+        # Vhigh = max(q_values_upper)
+        # print("Vlow is: {}".format(Vlow))
+        # print("q_upper values: {}".format(q_values_upper))
+
+        #self.q_values_lower_max.append(Vlow)
+        #self.q_values_lower_max.append(Vhigh)
+
+
+        #print("q_upper: {}".format(q_upper_curr))
+        #print("q_lower: {}".format(q_lower_curr))
         secure_random = random.SystemRandom()
-        action_pool = self.minimize_action_pool(state)
+        action_pool, q_values_lower, q_values_upper = self.minimize_action_pool(state)
+
+        #print("action pool is: {}".format(action_pool))
         # print("The action pool {}".format(action_pool))
         random_index = secure_random.randrange(0,len(action_pool))
         indexes_valid_actions=[]
@@ -359,6 +388,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #There are no actions after elimination
         #Using epsilon greedy from all the actions
         if not indexes_valid_actions:
+            print("q_values_lower: {} / q_values_upper: {}".format(q_values_lower, q_values_upper))
+            print("no valid ae actions!!! - use epsilon greedy")
+            self.ae_valid_actions = False
             self.epsilon_greedy_counter += 1
 
             return super(AElearner,self).choose_next_action(state)
@@ -368,7 +400,12 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         new_action[random_index] = 1
         self.reduce_thread_epsilon()
         #print("succefuly eliminated actions")
-        return new_action,q_values
+        #print("new action is: {}".format(new_action))
+        #print("q_values (upper): {}".format(q_values))
+        return new_action,q_values, q_values_lower, q_values_upper
+
+
+
 
     def generate_final_epsilon(self):
         if self.num_actor_learners == 1:
@@ -397,7 +434,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
     #TODO: refactor to make this cleaner
     def prepare_state(self, state, total_episode_reward, steps_at_last_reward,
-                      ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward):
+                      ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, q_values_lower,q_values_upper):
         # Start a new game on reaching terminal state
         if episode_over:
             T = self.global_step.value() * self.max_local_steps
@@ -426,6 +463,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 2*np.array(self.scores).std(),
                 max(self.scores),
             ))
+            logger.info("q_values_lower: {} / q_values_upper: {}".format(q_values_lower,q_values_upper))
             #print(" T type {}".format(type(T)))
             self.vis.plot_current_errors(T,total_episode_reward)
             self.wr.writerow([T])
@@ -596,7 +634,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             while not episode_over:
 
                 A = self.num_actions
-                S = 10000000000000000000
+                S = 100000000000000000000000000000000000000000000000000000000000
+                #S = 2**S
                 delta = self.ae_delta
                 Vmax = 100000
                 c = 5
@@ -609,8 +648,11 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 # Choose next action and execute it
                 # print("intrinsic motivation print")
 
-
-                a, q_values = self.choose_next_action(s)
+                if self.ae_valid_actions:
+                    #print("there are ae valid actions")
+                    a, q_values, q_values_lower, q_values_upper = self.choose_next_action(s)
+                else:
+                    a, q_values = self.choose_next_action(s)
                 action_count+= 1
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward
@@ -630,7 +672,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 ## TODO: change S to the correct number (numebr of states until now or what is supposed to be double by k)
                 # k = k * S
 
-                bonus =  self.beta_function(A,S,delta,k,Vmax,c)
+                #bonus =  self.beta_function(A,S,delta,k,Vmax,c)
+                bonus = 1196518.8710327097
+                #print("bonus is: {}".format(bonus))
 
 
                 # Rescale or clip immediate reward
@@ -705,8 +749,15 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                         i+1 == episode_length,
                         bonuses[i])
 
+
+            #print("Vlow is: {}".format(Vlow))
+            #print("q_upper values: {}".format(q_values_upper))
+
+            #self.q_values_lower_max.append(Vlow)
+            #self.q_values_lower_max.append(Vhigh)
+            
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
-                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
+                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, q_values_lower, q_values_upper)
 
 class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
     """
@@ -758,7 +809,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
 
     #TODO: refactor to make this cleaner
     def prepare_state(self, state, total_episode_reward, steps_at_last_reward,
-                      ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward):
+                      ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, Vlow, Vhigh):
         # Start a new game on reaching terminal state
         if episode_over:
             T = self.global_step.value() * self.max_local_steps
@@ -780,6 +831,7 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
                 2*np.array(self.scores).std(),
                 max(self.scores),
             ))
+
             self.vis.plot_current_errors(T,total_episode_reward)
             self.wr.writerow(T)
             self.wr.writerow(total_episode_reward)
@@ -985,4 +1037,4 @@ class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
                         i+1 == episode_length)
 
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
-                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward)
+                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, Vlow, Vhigh)
