@@ -152,9 +152,14 @@ class ValueBasedLearner(ActorLearner):
         #print("{}".format(type(self).__name__))
         new_action = np.zeros([self.num_actions])
         #TODO check session run
-        q_values = self.session.run(
-            self.local_network.output_layer,
-            feed_dict={self.local_network.input_ph: [state]})[0]
+        if self.alg_type != "AE":
+            q_values = self.session.run(
+                self.local_network.output_layer,
+                feed_dict={self.local_network.input_ph: [state]})[0]
+        else:
+            q_values = self.session.run(
+                self.local_network_upper.output_layer,
+                feed_dict={self.local_network_upper.input_ph: [state]})[0]
 
         if self.exploration_strategy == 'epsilon-greedy':
             action_index = self.epsilon_greedy(q_values)

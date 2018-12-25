@@ -291,33 +291,43 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         self.q_values_upper_max = []
         self.q_values_lower_max = []
         self.ae_valid_actions = True
+        self.action_meanings = self.emulator.env.unwrapped.get_action_meanings()
+        self.minimized_actions_counter = {value:0 for value in self.action_meanings}
+        print(self.minimized_actions_counter)
         # print("In AE class")
 
 
 
     def beta_function(self, A,S,delta,k,Vmax,c):
+        #print (utils.fast_cts.__name__)
         #print("This is temp {}".format(temp))
+        #print("This is k")
+        #print(k)
         if k < 1:
             k = 1
         # print("c is : {}".format(c))
-        #print("k is : {}".format(k))
+        # print("k is : {}".format(k))
         # print("S is : {}".format(S))
         # print("A is : {}".format(A))
         # print("delta is : {}".format(delta))
-        # print("c*(k-1)*(k-1)*S*A is : {}".format(c*(k-1)*(k-1)*S*A))
-        #print("c*(k1)*(k1)*S*A/delta is : {}".format(c*(k)*(k)*S*A/delta))
-        # print("math.log(c*(k-1)*(k-1)*S*A/delta is : {}".format(math.log(c*(k-1)*(k-1)*S*A/delta)))
-        #k = math.maximum(k,1)
+        # # print("c*(k-1)*(k-1)*S*A is : {}".format(c*(k-1)*(k-1)*S*A))
+        # print("c*(k1)*(k1)*S*A/delta is : {}".format(c*(k)*(k)*S*A/delta))
+        # print("math.log(c*(k-1)*(k-1)*S*A/delta is : {}".format(math.log(c*(k)*(k)*S*A/delta)))
+        # #k = math.maximum(k,1)
+        # z = 5
+        # assert(math.isnan(5))
+        assert(not math.isnan(math.log(c*k*k*S*A/delta))) , "log of left is nan"
         left = math.sqrt(k*math.log(c*k*k*S*A/delta))
-        temp = (c*(k-1)*(k-1)*S*A/delta)
-
+        assert (not math.isnan(left)) ," left side of beta is Nan"
 
         if k == 1:
             right =0;
         else:
             right = math.sqrt((k-1)*math.log(c*(k-1)*(k-1)*S*A/delta)) #the error is here
+        assert (not math.isnan(right)) ," right side of beta is Nan"
 
         beta = k*Vmax*(left-(1-1/k)*right)
+        assert (not math.isnan(beta)) ," right side of beta is Nan"
         return beta
 
     ### pay attention: call it for upper q
@@ -325,13 +335,19 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
     def minimize_action_pool(self, state):
         new_actions = np.zeros([self.num_actions])
         #TODO get q upperbound values
-        # q_upper
+        #TODO: target or local ???
+        # q_values_upper = self.session.run(
+        #         self.target_network_upper.output_layer,
+        #         feed_dict={self.target_network_upper.input_ph: [state]})[0]
+        # q_values_lower = self.session.run(
+        #         self.target_network_lower.output_layer,
+        #         feed_dict={self.target_network_lower.input_ph: [state]})[0]
         q_values_upper = self.session.run(
-                self.target_network_upper.output_layer,
-                feed_dict={self.target_network_upper.input_ph: [state]})[0]
+                self.local_network_upper.output_layer,
+                feed_dict={self.local_network_upper.input_ph: [state]})[0]
         q_values_lower = self.session.run(
-                self.target_network_lower.output_layer,
-                feed_dict={self.target_network_lower.input_ph: [state]})[0]
+                self.local_network_lower.output_layer,
+                feed_dict={self.local_network_lower.input_ph: [state]})[0]
         #TODO V lower upperbound
         Vlow = max(q_values_lower)
         Vhigh = max(q_values_upper)
@@ -341,6 +357,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         # print("The value of Vlow is {}".format(Vlow))
         for index, action in enumerate(new_actions):
             new_actions[index] = q_values_upper[index] >= Vlow
+            if q_values_upper[index] < Vlow :
+                self.minimized_actions_counter[self.action_meanings[index]] += 1
             # print("The value of q_values_upper on index: {} is :{}".format(index,q_values_upper[index]))
         #print("new actions are:  {}".format(new_actions))
         #print("new actions array: {}".format(new_actions))
@@ -375,7 +393,12 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #print("q_lower: {}".format(q_lower_curr))
         secure_random = random.SystemRandom()
         action_pool, q_values_lower, q_values_upper = self.minimize_action_pool(state)
+        if self.local_step % 500 == 0 :
+            #num_actions_minimized = self.num_actions - np.sum(action_pool)
 
+            #minimized_actions = [ self.action_meanings[index] for index,value in enumerate (action_pool) if value == 0 ]
+            logger.info('Total minimized actions{0} / LOCAL STEP {1} '.format(
+                            self.minimized_actions_counter, self.local_step ))
         #print("action pool is: {}".format(action_pool))
         # print("The action pool {}".format(action_pool))
         random_index = secure_random.randrange(0,len(action_pool))
@@ -388,12 +411,12 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         #There are no actions after elimination
         #Using epsilon greedy from all the actions
         if not indexes_valid_actions:
-            print("q_values_lower: {} / q_values_upper: {}".format(q_values_lower, q_values_upper))
-            print("no valid ae actions!!! - use epsilon greedy")
+            #print("q_values_lower: {} / q_values_upper: {}".format(q_values_lower, q_values_upper))
+            #print("no valid ae actions!!! - use epsilon greedy")
             self.ae_valid_actions = False
             self.epsilon_greedy_counter += 1
-
-            return super(AElearner,self).choose_next_action(state)
+            super_return = super(AElearner,self).choose_next_action(state)
+            return super_return[0], super_return[1] ,q_values_lower, q_values_upper
         self.ae_counter += 1
         random_index = secure_random.choice(indexes_valid_actions)
 
@@ -466,6 +489,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             logger.info("q_values_lower: {} / q_values_upper: {}".format(q_values_lower,q_values_upper))
             #print(" T type {}".format(type(T)))
             self.vis.plot_current_errors(T,total_episode_reward)
+            self.vis.plot_total_ae_counter(T,self.minimized_actions_counter, self.action_meanings)
+            self.vis.plot_q_values(q_values_lower,q_values_upper,self.action_meanings)
             self.wr.writerow([T])
             self.wr.writerow([total_episode_reward])
             #print(" total episode reward type {}".format(type(total_episode_reward)))
@@ -561,6 +586,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             return
         #TODO check if we need two replay memories
         s_i, a_i, r_i, s_f, is_terminal ,b_i = self.replay_memory.sample_batch(self.batch_size)
+        #print("This is b_i {}".format(b_i))
 
         # if(self.which_net_to_update_counter %2):
 
@@ -571,15 +597,19 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             self.one_step_reward: r_i+b_i,
         }
         y_target_upper = self.session.run(self.y_target_upper, feed_dict=feed_dict)
-
+        #print(y_target_upper)
         feed_dict={
             self.local_network_upper.input_ph: s_i,
             self.local_network_upper.target_ph: y_target_upper,
             self.local_network_upper.selected_action_ph: a_i
         }
+        #TODO , the exception of nan happens here.
+        #print(self.local_network_upper.get_gradients)
         grads = self.session.run(self.local_network_upper.get_gradients,
                                      feed_dict=feed_dict)
-        self.apply_gradients_to_shared_memory_vars(grads)
+
+        #assert (not tf.debugging.is_nan(grads)) , " upper local network grads are nan"
+        self.apply_gradients_to_shared_memory_vars(grads, upper_or_lower = "Upper")
         # else:
         feed_dict={
             self.local_network_lower.input_ph: s_f,
@@ -596,7 +626,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
         }
         grads = self.session.run(self.local_network_lower.get_gradients,
                                     feed_dict=feed_dict)
-        self.apply_gradients_to_shared_memory_vars(grads)
+        #assert (not tf.debugging.is_nan(grads)) , " lower local network grads are nan"
+        self.apply_gradients_to_shared_memory_vars(grads , upper_or_lower = "Lower")
 
 
 
@@ -634,7 +665,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             while not episode_over:
 
                 A = self.num_actions
-                S = 100000000000000000000000000000000000000000000000000000000000
+                S = 100000000
                 #S = 2**S
                 delta = self.ae_delta
                 Vmax = 100000
@@ -648,11 +679,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 # Choose next action and execute it
                 # print("intrinsic motivation print")
 
-                if self.ae_valid_actions:
-                    #print("there are ae valid actions")
-                    a, q_values, q_values_lower, q_values_upper = self.choose_next_action(s)
-                else:
-                    a, q_values = self.choose_next_action(s)
+                a, q_values, q_values_lower, q_values_upper = self.choose_next_action(s)
                 action_count+= 1
                 new_s, reward, episode_over = self.emulator.next(a)
                 total_episode_reward += reward
@@ -665,6 +692,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 ## TODO change back to update 2 and understand the underlying
                 ## cython code
                 k = (self.density_model[index_of_a]).update(prev_frame)
+                #print(type(self.density_model[index_of_a]))
+                assert( not math.isnan(k)) , "k is nan"
                 # print("K value is {}".format(k))
                 #You should trace the update call here, as I recall it leads to the c funtion in a c file
                 # And not to the python function
@@ -672,13 +701,25 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 ## TODO: change S to the correct number (numebr of states until now or what is supposed to be double by k)
                 # k = k * S
 
-                #bonus =  self.beta_function(A,S,delta,k,Vmax,c)
-                bonus = 1196518.8710327097
+                bonus =  self.beta_function(A,S,delta,k,Vmax,c)
+
+                #  The bonus isn't supposed to be the output of beta beta_function
+                #  In the parer it is normilized by k
+                #  TODO: check what should we use as the bonus
+                if k > 1:
+                    bonus = bonus / k
+
+                #print("this is k")
+                #print (k)
+
+                #bonus = 1196518.8710327097
                 #print("bonus is: {}".format(bonus))
 
 
                 # Rescale or clip immediate reward
                 reward = self.rescale_reward(self.rescale_reward(reward))
+                # TODO figure out how to rescale bonus
+                bonus = self.rescale_reward(bonus)
                 total_augmented_reward += reward
                 ep_t += 1
 
@@ -696,6 +737,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 ##We update the target network here
                 if global_step % self.q_target_update_steps == 0:
                     self.update_target()
+                    print("We are updating the target networks")
+                    #print("Current k value")
                 ## We update the desity model here
                 if global_step % self.density_model_update_steps == 0:
                     #returns the index of the chosen action
@@ -723,8 +766,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                     steps = global_step - global_steps_at_last_record
                     global_steps_at_last_record = global_step
 
-                    # logger.debug('Mean Bonus={:.4f} / Max Bonus={:.4f} / STEPS/s={}'.format(
-                    # #    bonus_array.mean(), bonus_array.max(), steps/float(time.time()-t0)))
+                    #logger.debug('Mean Bonus={:.4f} / Max Bonus={:.4f} / STEPS/s={}'.format(
+                    #    bonus_array.mean(), bonus_array.max(), steps/float(time.time()-t0)))
                     t0 = time.time()
 
 
@@ -755,9 +798,9 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
             #self.q_values_lower_max.append(Vlow)
             #self.q_values_lower_max.append(Vhigh)
-            
+
             s, total_episode_reward, _, ep_t, episode_ave_max_q, episode_over = \
-                self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, q_values_lower, q_values_upper)
+                    self.prepare_state(s, total_episode_reward, self.local_step, ep_t, episode_ave_max_q, episode_over, bonuses, total_augmented_reward, q_values_lower, q_values_upper)
 
 class PseudoCountQLearner(ValueBasedLearner, DensityModelMixin):
     """

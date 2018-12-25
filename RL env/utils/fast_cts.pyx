@@ -288,21 +288,19 @@ cdef class CTSDensityModel:
 
 
     def update(self, obs):
-        print("Fast cts")
+        #print("Fast cts")
         obs = resize(obs, (self.height, self.width), preserve_range=True)
         obs = np.floor((obs*self.num_bins)).astype(np.int32)
-
         log_prob, log_recoding_prob = self._update(obs)
         return self.ret_pseudocounts(log_prob, log_recoding_prob)
         #FIXME this is the real implementation
         #return self.exploration_bonus(log_prob, log_recoding_prob)
 
     def ret_pseudocounts(self,log_prob,log_recoding_prob):
-    			prob = np.exp(log_prob)
-    			recoding_prob = np.exp(log_recoding_prob)
-
-    			pseudocount = prob * (1 - recoding_prob) / np.maximum(recoding_prob - prob, 1e-10)
-    			return pseudocoun
+        recoding_prob = np.exp(log_recoding_prob)
+        prob_ratio = np.exp(log_recoding_prob - log_prob)
+        pseudocount = (1 - recoding_prob) / np.maximum(prob_ratio - 1, 1e-10)
+        return pseudocount
 
     cpdef (double, double) _update(self, int[:, :] obs):
         cdef int[:] context = np.array([0, 0, 0, 0], np.int32)

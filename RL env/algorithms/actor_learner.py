@@ -73,13 +73,13 @@ class ActorLearner(Process):
         self.global_step = args.global_step
         self.local_episode = 0
         self.last_saving_step = 0
-        self.filename = str(args.game)+"_"+str(args.alg_type)+"_"+str(args.actor_id)
+        self.filename = str(args.game)+"_"+str(args.alg_type)+"_"+str(args.actor_id)+"_minimize_local"
 
         self.saver = None
         self.actor_id = args.actor_id
         self.visdom = args.visdom
         # launch python -m visdom.server
-        self.vis =  Visualizer(self.actor_id,self.visdom) ## default port is 8098 http://localhost:8097. actor_id
+        self.vis =  Visualizer(self.actor_id,self.visdom,args.num_actions) ## default port is 8098 http://localhost:8097. actor_id
         self.alg_type = args.alg_type
         #print("self.alg.type is: {}".format(self.alg_type))
         self.use_monitor = args.use_monitor
@@ -362,11 +362,14 @@ class ActorLearner(Process):
         else:
             return 0.0
 
-    def apply_gradients_to_shared_memory_vars(self, grads):
+    def apply_gradients_to_shared_memory_vars(self, grads ,upper_or_lower = None):
         if self.alg_type != "AE":
             self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars)
         else: #TODO: check if also upper needed
-            self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars_lower)
+            if upper_or_lower == "Upper":
+                self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars_upper)
+            if upper_or_lower == "Lower":
+                self._apply_gradients_to_shared_memory_vars(grads, self.learning_vars_lower)
 
 
     @only_on_train()

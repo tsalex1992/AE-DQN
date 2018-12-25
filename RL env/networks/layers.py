@@ -69,7 +69,7 @@ def fc(name, _input, output_dim, activation='relu', ae= ''):
 def fc_weight_variable(shape, name, ae=''):
     # initializer = tf.contrib.layers.xavier_initializer()
     # initializer = tf.random_normal_initializer(stddev=0.02)
-    d = 10000000000000000000000000000.0 / np.sqrt(shape[0])
+    d = 1.0 / np.sqrt(shape[0])
     #d = d * d
 
     initializer = tf.random_uniform_initializer(-d, d)
@@ -82,7 +82,7 @@ def fc_weight_variable(shape, name, ae=''):
     return tf.get_variable(name, shape, dtype=tf.float32, initializer=initializer)
 
 def fc_bias_variable(shape, input_channels, name, ae = ''):
-    d = 0.001 / np.sqrt(shape[0])
+    d = 10 / np.sqrt(shape[0])
     #d = d * d
     initializer = tf.zeros_initializer()
     if ae == 'UpperQ' :

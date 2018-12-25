@@ -14,6 +14,7 @@ class QNetwork(Network):
             encoded_state = self._build_encoder()
 
             self.loss = self._build_q_head(encoded_state)
+
             self._build_gradient_ops(self.loss)
 
 

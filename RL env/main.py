@@ -264,7 +264,7 @@ def get_config():
 
     #override defaults
     parser.add_argument('game', help='Name of game')
-    parser.add_argument('--alg_type', default="a3c", help='Type of algorithm: q (for Q-learning), sarsa, a3c (for actor-critic), AE for action elimination', dest='alg_type')
+    parser.add_argument('--alg_type', default="AE", help='Type of algorithm: q (for Q-learning), sarsa, a3c (for actor-critic), AE for action elimination', dest='alg_type')
     parser.add_argument('--arch', default='NIPS', help='Which network architecture to use: NIPS, NATURE, ATARI-TRPO, or FC (fully connected)', dest='arch')
     parser.add_argument('--env', default='GYM', help='Type of environment: ALE or GYM', dest='env')
     parser.add_argument('--rom_path', help='Directory where the game roms are located (needed for ALE environment)', dest='rom_path')
