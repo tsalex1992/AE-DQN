@@ -489,8 +489,8 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
             logger.info("q_values_lower: {} / q_values_upper: {}".format(q_values_lower,q_values_upper))
             #print(" T type {}".format(type(T)))
             self.vis.plot_current_errors(T,total_episode_reward)
-            self.vis.plot_total_ae_counter(T,self.minimized_actions_counter, self.action_meanings)
-            self.vis.plot_q_values(q_values_lower,q_values_upper,self.action_meanings)
+            #self.vis.plot_total_ae_counter(T,self.minimized_actions_counter, self.action_meanings)
+            self.vis.plot_q_values(T,q_values_lower,q_values_upper,self.action_meanings)
             self.wr.writerow([T])
             self.wr.writerow([total_episode_reward])
             #print(" total episode reward type {}".format(type(total_episode_reward)))
@@ -666,10 +666,16 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
 
                 A = self.num_actions
                 S = 100000000
+                factor_delta_scale_to_1_10 = 100000000000
+                factor_delta_actual = 100
+                factor_divide_bonus_scale_to_0_10 = 100000000
+                factor_divide_bonus = 1000
                 #S = 2**S
-                delta = self.ae_delta
+                delta = self.ae_delta * factor_delta_actual
+                #delta = self.ae_delta * factor_delta # experimental: trying to stabilize the bonus along the entire learning
                 Vmax = 100000
                 c = 5
+
                 # Sync local learning net with shared mem
                 #TODO: upper / lower
                 self.sync_net_with_shared_memory(self.local_network_lower, self.learning_vars_lower)
@@ -708,6 +714,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 #  TODO: check what should we use as the bonus
                 if k > 1:
                     bonus = bonus / k
+                    bonus = bonus / factor_divide_bonus
 
                 #print("this is k")
                 #print (k)
@@ -719,7 +726,7 @@ class AElearner(ValueBasedLearner,DensityModelMixinAE):
                 # Rescale or clip immediate reward
                 reward = self.rescale_reward(self.rescale_reward(reward))
                 # TODO figure out how to rescale bonus
-                bonus = self.rescale_reward(bonus)
+                #bonus = self.rescale_reward(bonus)
                 total_augmented_reward += reward
                 ep_t += 1
 

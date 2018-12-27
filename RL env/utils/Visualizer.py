@@ -66,9 +66,9 @@ class Visualizer():
 
 
 
-    def plot_q_values(self, q_values_lower, q_values_upper,action_meanings):
+    def plot_q_values(self,global_step, q_values_lower, q_values_upper,action_meanings):
 
-
+        self.global_step.append(global_step)
         self.Vlow.append(max(q_values_lower))
         for  i in range(self.num_actions):
             self.q_values_upper[i].append(q_values_upper[i])
